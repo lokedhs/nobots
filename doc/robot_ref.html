@@ -1,0 +1,175 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <title>Robot instructions reference</title>
+  </head>
+
+  <body>
+    <h1>Robot instructions reference</h1>
+
+    <p>
+      All robot instructions take their arguments on the user stack, and
+      returns any information on the user stack. Remember to pop off any 
+      values returned even if you don't use them.
+    </p>
+
+    <table width="100%" border=1 cellpadding=5 cellspacing=0>
+
+      <tr>
+	<th> Instruction </th>
+	<th> Arguments </th>
+	<th> Return value </th>
+	<th> Description </th>
+      </tr>
+
+      <tr>
+	<th> <code>setspeed</code> </th>
+	<td> <code>speed</code> </td>
+	<td> </td>
+	<td> Sets the speed to <em>speed</em>. It will take a certain
+	  ammount of time until the actual speed reaches that
+	  specified using this instruction. The time depends on the
+	  acceleration power or brake power. </td>
+      </tr>
+
+      <tr>
+	<th> <code>getspeed</code> </th>
+	<td> <code></code> </td>
+	<td> <code>speed</code> </td>
+	<td> Returns the current speed. </td>
+      </tr>
+
+      <tr>
+	<th> <code>setheading</code> </th>
+	<td> <code>heading</code> </td>
+	<td> </td>
+	<td> Sets the heading. The robot will start turning towards
+	this heading. The speed depends on the robots turn
+	  speed. </td>
+      </tr>
+
+      <tr>
+	<th> <code>getheading</code> </th>
+	<td> </td>
+	<td> <code>heading</code> </td>
+	<td> Returns the current heading. </td>
+      </tr>
+
+      <tr>
+	<th> <code>getxcoordinate</code> </th>
+	<td> </td>
+	<td> <code>x-coordinate</code> </td>
+	<td> Returns the robots x coordinate. </td>
+      </tr>
+
+      <tr>
+	<th> <code>getycoordinate</code> </th>
+	<td> </td>
+	<td> <code>y-coordinate</code> </td>
+	<td> Returns the robots y coordinate. </td>
+      </tr>
+
+      <tr>
+	<th> <code>getmaxspeed</code> </th>
+	<td> </td>
+	<td> <code>max-speed</code> </td>
+	<td> Returns the robots maximum speed </td>
+      </tr>
+
+      <tr>
+	<th> <code>getscannerstatus</code> </th>
+	<td> </td>
+	<td> <code>status</code> </td>
+	<td> Returns the current scanner status. You can't use the
+	  scanner until this value is 0. </td>
+      </tr>
+
+      <tr>
+	<th> <code>uptime</code> </th>
+	<td> </td>
+	<td> <code>time</code> </td>
+	<td> Returns the time since the game started. </td>
+      </tr>
+
+      <tr>
+	<th> <code>scan</code> </th>
+	<td> <code>direction,width</code> </td>
+	<td> <code>status</code> </td>
+	<td> Scan for other robots. The the scanner looks in a
+	  <em>width</em> wide arc at the angle <em>direction</em>. The
+	  scanner status before the scan is returned. That is, if the
+	  return value is greater than 0 then the scan was not
+	  perfomed. </td>
+      </tr>
+
+      <tr>
+	<th> <code>wallscan</code> </th>
+	<td> <code>direction,range</code> </td>
+	<td> <code>status</code> </td>
+	<td> Not yet documented. </td>
+      </tr>
+
+      <tr>
+	<th> <code>fire</code> </th>
+	<td> <code>direction</code> </td>
+	<td> <code>status</code> </td>
+	<td> Fire the weapon. The weapon status before firing is
+	  returned. That is, if the return value is greater than 0
+	  then the weapon was not fired. </td>
+      </tr>
+
+      <tr>
+	<th> <code>send</code> </th>
+	<td> <code>dest,id,len,msgptr</code> </td>
+	<td> <code>status</code> </td>
+	<td> Send a message to a channel. <code>dest</code> is the 
+	  channel to which this message is sent,
+	  <code>id</code> is the message id, <code>len</code> is the
+	  length of the message, <code>msgptr</code> is the address
+	  where the message is stored. The number of robots that
+	  received the message is returned. </td>
+      </tr>
+
+      <tr>
+	<th> <code>receieve</code> </th>
+	<td> <code>msgptr</code> </td>
+	<td> </td>
+	<td> Receieve a message. </td>
+      </tr>
+
+      <tr>
+	<th> <code>discard</code> </th>
+	<td> </td>
+	<td> </td>
+	<td> Discard a message from the list of pending
+	  messages. </td>
+      </tr>
+
+      <tr>
+	<th> <code>setchannel</code> </th>
+	<td> <code>newchan</code> </td>
+	<td> </td>
+	<td> Selects the channel on which to listen for
+	  messages. </td>
+      </tr>
+
+      <tr>
+	<th> <code>addtimer</code> </th>
+	<td> <code>attime</code> </td>
+	<td> <code>id</code> </td>
+	<td> Sets a timer to expire in <code>attime</code>
+	  updates. Returns a unique timer id. </td>
+      </tr>
+
+      <tr>
+	<th> <code>deltimer</code> </th>
+	<td> <code>id</code> </td>
+	<td> </td>
+	<td> Deletes the timer with id <code>id</code>. </td>
+      </tr>
+
+    </table>
+
+
+  </body>
+</html>

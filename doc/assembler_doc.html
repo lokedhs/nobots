@@ -1,0 +1,305 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <title>Assembler documentation</title>
+  </head>
+
+  <body>
+    <h1>Assembler documentation</h1>
+
+    <h2> Smalltalk </h2>
+
+    <p>
+      Each robot contains a virtual CPU that runs a program fed to it
+      when the game is started. Each robot has its own memory and
+      cannot touch or in any way affect the execution of the other
+      robots programs.
+    </p>
+
+    <p>
+      The CPU has, somewhat similar to the computers of the late 70's,
+      separate memories for program and data. There are no
+      instructions to manipulate the program memory, therefore it is
+      impossible to create self-modifying code.
+    </p>
+
+    <p>
+      There are no registers or status flags like the ones found in
+      most real CPU's. Instead, every instruction has zero, one or two
+      extension words that can be used in different ways. What these
+      extension words are used for is determined by bits in the
+      instruction word. Usually, however, you can use all the features
+      of the language without having to think about the internal
+      representation of the instructions.
+    </p>
+
+
+    <h2> Addressing modes </h2>
+
+    <p>
+      There are four addessing modes, these are: immediate number,
+      immediate symbol, dereferenced symbol and indirect symbol.
+    </p>
+
+    <h3> Immediate number </h3>
+
+    <p>
+      The immediate number addressing mode is the simplest. Whatever
+      number you write in the code is the one used in the
+      instruction. Example:
+    </p>
+
+    <pre>
+		move 10,xyz
+    </pre>
+
+    <p>
+      The immediate number here is the 10. This instruction results in 
+      the value 10 being stored in the memory location pointed to by
+      the value of the symbol <code>xyz</code>.
+    </p>
+
+    <h3> Immediate symbol </h3>
+
+    <p>
+      The immediate symbol addressing mode is similar to the immediate
+      number. The number used is the value of a specified symbol. In
+      the code, the symbol is preceeded by a %-sign. Example:
+    </p>
+
+    <pre>
+		move %xx,yy
+    </pre>
+
+    <p>
+      The immediate symbol is the %xx. This instruction stores the
+      value of the symbol <code>xx</code> into the memory location
+      pointed to by <code>yy</code>.
+    </p>
+
+    <h3> Dereferenced symbol </h3>
+
+    <p>
+      The dereferenced symbol addressing mode takes the value of the
+      symbol and uses the value stored at that address in memory. Example:
+    </p>
+
+    <pre>
+		move xx,yy
+    </pre>
+
+    <p>
+      This instruction stores the contents of the memory location
+      pointed to by <code>xx</code> in the memory location pointed to
+      by <code>yy</code>.
+    </p>
+
+    <h3> Indirect symbol </h3>
+
+    <p>
+      The indirect symbol addressing mode takes the value of the
+      symbol, looks up that address in memory and uses that value for
+      another lookup in memory, that value is the one used in the
+      operation. Example:
+    </p>
+
+    <pre>
+		move &xx,yy
+    </pre>
+
+    <p>
+      The indirect symbol here is &amp;xx. This instruction does an
+      indirect lookup of <code>xx</code> and stores the resulting
+      value in the memory location pointed to by <code>yy</code>.
+    </p>
+
+    <h3> Offsets </h3>
+
+    <p>
+      With all of the above addessing modes except immediate number,
+      you can specify an offset that will be added to the symbol value 
+      during assembly. The offset is specified using a / followed by a 
+      number. Here is an example:
+    </p>
+
+    <pre>
+		move xx/2,yy
+    </pre>
+
+    <p>
+      This will look up the value stored in the memory location
+      pointed to by the symbol value of <code>xx</code> plus 2 and
+      store it in the memory location pointed to by <code>yy</code>.
+    </p>
+
+
+    <h2> Arrays </h2>
+
+    <p>
+      There is no
+      difference between arrays and normal auto-allocated
+      variables. If you do not use the <code>array</code> keyword to
+      specify the number of words of memory the symbol value will
+      point to, the size will be 1.
+    </p>
+
+    <p>
+      The format for the <code>$array</code> keyword is:
+    </p>
+
+    <p>
+      <code>
+	$array <em>symbol</em> : <em>size</em> [ <em>init-list</em> ]
+      </code>
+    </p>
+
+    <p>
+      This will cause <em>symbol</em> to point to <em>size</em> number
+      of words initialized with the contents of <em>init-list</em>,
+      which is a comma separated list of integers.
+    </p>
+
+    <p>
+      If you specify an <em>init-list</em> then the <em>size</em> is
+      optional, it will default to the number of elements in the
+      <em>init-list</em>. You may not specify a <em>size</em> that is
+      less than the number of elements in the init list. If you do not
+      specify an <em>init-list</em> then the <em>size</em> parameter
+      is mandatory.
+    </p>
+
+
+    <h2> Callbacks </h2>
+
+    <h3> Installing and removing callbacks </h3>
+
+    <p>
+      A callback is a kind of interrupt. You set up a <em>callback
+	handler</em> for a certain callback. A callback handler is set 
+      up as follows:
+    </p>
+
+    <p>
+      <code>
+	callback <em>id</em>,<em>handler</em>
+      </code>
+    </p>
+
+    <p>
+      After this command, when event <em>id</em> occurs, the CPU will
+      enter callback mode and jump to the location specified by
+      <em>handler</em>. While the CPU is in callback mode all
+      callbacks will be deferred until the program exists callback
+      mode by using the command <code>rtc</code>, this command will
+      also return to wherever it was before the callback was called.
+    </p>
+
+    <p>
+      The handler for the callback can be removed by specifying the
+      number -1 as the <em>handler</em>.
+    </p>
+
+    <h3> Accessing callback data </h3>
+
+    <p>
+      Some callbacks need to send some information to the callback
+      handler. This information is called the <em>callback data</em>
+      and is placed in a special location that is accessed using the
+      command <code>getcb</code>. The format for this command is as
+      follows:
+    </p>
+
+    <p>
+      <code>
+	getcb <em>location</em>,<em>destination</em>
+      </code>
+    </p>
+
+    <p>
+      This instruction takes the contents of callback data location
+      <em>location</em> and places it in the memory location pointed
+      to by <em>destination</em>.
+    </p>
+
+
+
+    <h2> Expressions </h2>
+
+    <h3> Typing expressions </h3>
+
+    <p>
+      The assembler supports expressions wherever an integer is
+      expected. Expressions are entered inside parentheses. For
+      example:
+    </p>
+
+    <p>
+      <code>
+	move (10+2*40),var
+      </code>
+    </p>
+
+    <p>
+      This is the same as: <code>move 90,var</code>.
+    </p>
+
+    <p>
+      Keep in mind that the unary operator -, is part of an
+      expression, not a number. This means that if you want to enter a 
+      negative number you have to enclose it within parentheses.
+    </p>
+
+
+    <h3> Defines </h3>
+
+    <p>
+      The assembler allows you to define mnemonics to be used in place 
+      of an expression. The format for a define is as follows:
+    </p>
+
+    <p>
+      <code>
+	$define <em>symbol</em> = <em>value</em>
+      </code>
+    </p>
+
+    <p>
+      This will set <em>symbol</em> to be equal to
+      <em>value</em>. After this, the symbol can be used in place of
+      the value in any expression.
+    </p>
+
+
+    <h2> Runtime errors </h2>
+
+    <p>
+      Runtime errors are errors that prevent further execution of the
+      program, such as: jump to a location outside program memory,
+      trying to pop a value off the user stack when there are no
+      elements on it or specifying an illegal value for a callback
+      id.
+    </p>
+
+    <p>
+      Whenever a runtime error occurs the CPU does the following
+      things:
+    </p>
+
+    <ul>
+      <li> Clears the user stack
+      <li> Clears the system stack
+      <li> Exists callback mode and clears any pending callbacks
+      <li> Clears any pending messages
+      <li> Jumps to program location 0
+    </ul>
+
+    <p>
+      This will effectively restart the program with one important
+      difference: the memory contents are not restored. If the program 
+      relies on certain memory contents when started, it might not be
+      properly restarted after a runtime error.
+    </p>
+
+
+  </body>
+</html>

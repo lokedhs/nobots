@@ -1,0 +1,11 @@
+		   NoBots installation instructions
+
+The NoBots distribution consists of three binaries: The game proper,
+called "execute", the C2 compiler and the map editor. Each of these
+has to be compiled separately.
+
+First, edit the files Makefile.global and config.h to suit your
+operating system. Then, type "make" to build the game. If you want to
+build the C2 compiler, go to the "compiler" directory and type
+"make". Similarily, to build the map editor, go to the "mapedit"
+directory and type "make".

@@ -1,0 +1,183 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <title>Callbacks reference</title>
+  </head>
+
+  <body>
+    <h1>Callbacks reference</h1>
+
+
+    <table border=0>
+
+      <tr>
+	<th align=left> 0 </th>
+	<th align=left> CB_TAKE_DAMAGE </th>
+	<td colspan=2> Called when the robot takes some damage. </td>
+      </tr>
+
+      <tr>
+	<td> </td>
+	<td> </td>
+	<th align=left> 0 </th>
+	<td> Amount of damage taken </td>
+      </tr>
+
+
+      <tr>
+	<th align=left> 1 </th>
+	<th align=left> CB_ENEMY_FOUND </th>
+	<td colspan=2> Called once for each enemy found during
+	  scan. </td>
+      </tr>
+
+
+      <tr>
+	<td> </td>
+	<td> </td>
+	<th align=left> 0 </th>
+	<td> Enemy X coordinate </td>
+      </tr>
+
+      <tr>
+	<td> </td>
+	<td> </td>
+	<th align=left> 1 </th>
+	<td> Enemy Y coordinate </td>
+      </tr>
+
+      <tr>
+	<td> </td>
+	<td> </td>
+	<th align=left> 2 </th>
+	<td> Direction to enemy </td>
+      </tr>
+
+      <tr>
+	<td> </td>
+	<td> </td>
+	<th align=left> 3 </th>
+	<td> Distance to enemy </td>
+      </tr>
+
+      <tr>
+	<td> </td>
+	<td> </td>
+	<th align=left> 4 </th>
+	<td> Enemy heading </td>
+      </tr>
+
+      <tr>
+	<td> </td>
+	<td> </td>
+	<th align=left> 5 </th>
+	<td> Enemy speed </td>
+      </tr>
+
+      <tr>
+	<td> </td>
+	<td> </td>
+	<th align=left> 6 </th>
+	<td> Enemy ID </td>
+      </tr>
+
+      <tr>
+	<th align=left> 2 </th>
+	<th align=left> CB_ENEMY_NOT_FOUND </th>
+	<td colspan=2> Called if an enemy is not found suring
+	  scan. </td>
+      </tr>
+
+      <tr>
+	<th align=left> 3 </th>
+	<th align=left> CB_WALL_FOUND </th>
+	<td colspan=2> Called if a wall was found during
+	  wallscan. </td>
+      </tr>
+
+      <tr>
+	<td> </td>
+	<td> </td>
+	<th align=left> 0 </th>
+	<td> X coordinate of the point where the wall was found. </td>
+      </tr>
+
+      <tr>
+	<td> </td>
+	<td> </td>
+	<th align=left> 1 </th>
+	<td> Y coordinate of the point where the wall was found. </td> 
+      </tr>
+
+      <tr>
+	<td> </td>
+	<td> </td>
+	<th align=left> 2 </th>
+	<td> Distance to the wall. </td>
+      </tr>
+
+
+      <tr>
+	<th align=left> 4 </th>
+	<th align=left> CB_WALL_NOT_FOUND </th>
+	<td colspan=2> Called if a wall was not found during
+	  wallscan. </td>
+      </tr>
+
+
+      <tr>
+	<th align=left> 5 </th>
+	<th align=left> CB_COLLIDE_WALL </th>
+	<td colspan=2> Called when the robot collides with a
+	  wall. </td>
+      </tr>
+
+
+      <tr>
+	<th align=left> 6 </th>
+	<th align=left> CB_MESSAGE_RECEIEVED </th>
+	<td colspan=2> Called when a message is receieved on the
+	  channel the robot is listening to. </td>
+      </tr>
+
+      <tr>
+	<td> </td>
+	<td> </td>
+	<th align=left> 0 </th>
+	<td> ID of the sending robot. </td>
+      </tr>
+
+      <tr>
+	<td> </td>
+	<td> </td>
+	<th align=left> 1 </th>
+	<td> Message ID. </td>
+      </tr>
+
+      <tr>
+	<td> </td>
+	<td> </td>
+	<th align=left> 2 </th>
+	<td> Length of the message. </td>
+      </tr>
+
+
+      <tr>
+	<th align=left> 7 </th>
+	<th align=left> CB_TIMEOUT </th>
+	<td colspan=2> Called when a timeout expires. </td>
+      </tr>
+
+      <tr>
+	<td> </td>
+	<td> </td>
+	<th align=left> 0 </th>
+	<td> Timeout ID. </td>
+      </tr>
+      
+
+    </table>
+
+
+  </body>
+</html>

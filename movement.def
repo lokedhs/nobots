@@ -1,0 +1,145 @@
+!    robot assembler - robot assembly language
+!    Copyright (C) 1996-98  Elias Martenson (elias.martenson@sun.se)
+!
+!    This program is free software; you can redistribute it and/or modify
+!    it under the terms of the GNU General Public License as published by
+!    the Free Software Foundation; either version 2 of the License, or
+!    (at your option) any later version.
+!
+!    This program is distributed in the hope that it will be useful,
+!    but WITHOUT ANY WARRANTY; without even the implied warranty of
+!    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+!    GNU General Public License for more details.
+!
+!    You should have received a copy of the GNU General Public License
+!    along with this program; if not, write to the Free Software
+!    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+
+OPER setspeed 0
+{
+  POPVAR(newspeed);
+  RobotSetDestinationSpeed( current_robot, newspeed );
+  return 1;
+}
+
+OPER getspeed 0
+{
+  StackPushInt( program->usrstack, RobotGetSpeed( current_robot ) );
+  return 1;
+}
+
+OPER setheading 0
+{
+  POPVAR(newheading);
+  RobotSetDestinationHeading( current_robot, newheading );
+  return 1;
+}
+
+OPER getheading 0
+{
+  StackPushInt( program->usrstack, RobotGetHeading( current_robot ) );
+  return 1;
+}
+
+OPER getxcoordinate 0
+{
+  StackPushInt( program->usrstack, RobotGetXCoordinate( current_robot ) );
+  return 1;
+}
+
+OPER getycoordinate 0
+{
+  StackPushInt( program->usrstack, RobotGetYCoordinate( current_robot ) );
+  return 1;
+}
+
+OPER getmaxspeed 0
+{
+  StackPushInt( program->usrstack, RobotGetMaxSpeed( current_robot ) );
+  return 1;
+}
+
+OPER getscannerstatus 0
+{
+  StackPushInt( program->usrstack, RobotGetScannerStatus( current_robot ) );
+  return 1;
+}  
+
+OPER uptime 0
+{
+  StackPushInt( program->usrstack, RobotGetUpdateCounter( current_robot ) );
+  return 1;
+}
+
+OPER scan 0
+{
+  POPVAR(scan_direction);
+  POPVAR(scan_width);
+  int status;
+
+  status = RobotScan( current_robot, scan_direction, scan_width );
+  StackPushInt( program->usrstack, status );
+  return 1;
+}
+
+OPER wallscan 0
+{
+  POPVAR(direction);
+  POPVAR(range);
+
+  if( range < 0 ) {
+    range = 0;
+  }
+  if( range > RobotGetScannerRange( current_robot ) ) {
+    range = RobotGetScannerRange( current_robot );
+  }
+  RobotWallScan( current_robot, direction, range );
+  return 1;
+}
+
+
+!
+!  "fire" doesn't really belong here. It will move as soon as we have more than
+!  one command that deals with weapons
+!
+
+OPER fire 0
+{
+  POPVAR(direction);
+  int status;
+
+  status = fire_weapon( current_robot, fix_direction( direction ) );
+  StackPushInt( program->usrstack, status );
+  return 1;
+}
+
+OPER getweaponstatus 0
+{
+  StackPushInt( program->usrstack, RobotGetWeaponStatus( current_robot ) );
+  return 1;
+}
+
+
+!
+!  The timeout handling doesn't belong here either
+!
+OPER addtimer 0
+{
+  POPVAR(attime);
+
+  if( attime < 0 ) {
+    runtime_warning( current_robot, "illegal timer value" );
+    return 0;
+  }
+  StackPushInt( program->usrstack, RobotAddTimeout( current_robot, attime ) );
+  return 1;
+}
+
+OPER deltimer 0
+{
+  POPVAR(id);
+
+  RobotDeleteTimeout( current_robot, id );
+  return 1;
+}

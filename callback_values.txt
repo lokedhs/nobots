@@ -1,0 +1,35 @@
+0 CB_TAKE_DAMAGE
+
+	0: Ammount of damage taken
+
+1 CB_ENEMY_FOUND
+
+	0: Enemy X coordinate
+	1: Enemy Y coordinate
+	2: Direction to enemy
+	3: Distance to enemy
+	4: Enemy heading
+	5: Enemy speed
+	6: Enemy ID
+
+2 CB_ENEMY_NOT_FOUND
+
+3 CB_WALL_FOUND
+
+	0: Wall intersect X coordinate
+	1: Wall intersect Y coordinate
+	2: Wall intersect distance
+
+4 CB_WALL_NOT_FOUND
+
+5 CB_COLLIDE_WALL
+
+6 CB_MESSAGE_RECEIEVED
+
+	0: ID of sending robot
+	1: Message ID
+	2: Length of message
+
+7 CB_TIMEOUT
+
+	0: Timeout ID

@@ -1,0 +1,90 @@
+!    robot assembler - robot assembly language
+!    Copyright (C) 1998  Elias Martenson (elias.martenson@sun.se)
+!
+!    This program is free software; you can redistribute it and/or modify
+!    it under the terms of the GNU General Public License as published by
+!    the Free Software Foundation; either version 2 of the License, or
+!    (at your option) any later version.
+!
+!    This program is distributed in the hope that it will be useful,
+!    but WITHOUT ANY WARRANTY; without even the implied warranty of
+!    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+!    GNU General Public License for more details.
+!
+!    You should have received a copy of the GNU General Public License
+!    along with this program; if not, write to the Free Software
+!    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+
+!
+!  In:
+!    destination robot
+!    message id
+!    data length
+!    data pointer
+!
+!  Out:
+!    status, 0 = send successful, 1 = message refused
+!
+OPER send 0
+{
+  POPVAR( dest );
+  POPVAR( message_id );
+  POPVAR( msglen );
+  POPVAR( msgptr );
+  int ret;
+
+  ret = send_message( current_robot, dest, message_id, msglen, msgptr );
+  if( ret == -1 ) {
+    runtime_warning( current_robot, "send error" );
+    return 0;
+  }
+  else {
+    StackPushInt( program->usrstack, ret );
+  }
+
+  return 1;
+}
+
+
+OPER receieve 0
+{
+  int msgptr;
+
+  msgptr = StackPopInt( program->usrstack );
+  if( !receieve_message( current_robot, msgptr ) ) {
+    runtime_warning( current_robot, "receieve error" );
+    return 0;
+  }
+  else {
+    return 1;
+  }
+}
+
+
+OPER discard 0
+{
+  MessageData *message;
+
+  if( CircbufferNumValues( current_robot->waiting_messages ) == 0 ) {
+    runtime_warning( current_robot, "discard error" );
+    return 0;
+  }
+  message = CircbufferPopPtr( current_robot->waiting_messages );
+
+  if( --message->refcnt == 0 ) {
+    myfree( message->data );
+    myfree( message );
+  }
+
+  return 1;
+}
+
+
+OPER setchannel 0
+{
+  POPVAR( newchannel );
+
+  current_robot->listener_channel = newchannel;
+  return 0;
+}

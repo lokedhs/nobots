@@ -1,0 +1,74 @@
+#    robot assembler - robot assembly language
+#    Copyright (C) 1996-98  Elias Martenson (elias.martenson@sun.se)
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+include Makefile.global
+
+VERSION = 0.20
+
+EXEC = execute
+
+OBJS = execute.o evaluate.o assembler.o parser.o robot.o direction.o deffile.o \
+	scan.o octree.o bullet.o robot_move.o weapon.o map.o mapcommon.o \
+	comms.o robotlist.o
+
+EXTRALIBS = -lgui -lcommon -lXm -lXpm -lXt -lXext -lSM -lICE -lX11 -lm
+CFLAGS += -Icommon -I. $(XCFLAGS)
+LDFLAGS += -Lcommon -Lgui $(XLDFLAGS)
+SUBDIRS = common gui compiler mapedit
+
+all:		$(EXEC)
+
+$(EXEC):	$(OBJS) makegui makecommon
+		$(CC) $(LDFLAGS) -o $(EXEC) $(OBJS) $(EXTRALIBS) $(LIBS)
+
+parser.c:	parser.y lexer.c
+		$(YACC) parser.y
+		mv y.tab.c $@
+
+lexer.c:	lexer.l
+		$(LEX) lexer.l
+		mv lex.yy.c $@
+
+evaluate.o:	oper_functions.c
+
+assembler.o:	oper_syntax.c
+
+oper_functions.c oper_syntax.c:	make_oper.pl operations.def movement.def \
+			comms.def misc.def
+		$(PERL) make_oper.pl
+
+gui/libgui.a:	makegui
+
+makegui:
+		(cd gui ; $(MAKE))
+
+common/libcommon.a: makecommon
+
+makecommon:
+		(cd common ; $(MAKE))
+
+clean:
+		rm -f $(EXEC) *.o parser.c lexer.c oper_functions.c
+		rm -f oper_syntax.c
+		(for dir in $(SUBDIRS) ; do ( cd $$dir ; $(MAKE) clean ) ; done)
+
+dist:
+		(robot_dir=`pwd` ; cd .. ; tar cf - `basename $$robot_dir` | (cd /tmp ; tar xvf -) ; mv /tmp/`basename $$robot_dir` $$robot_dir/nobots-$(VERSION))
+		(cd nobots-$(VERSION) ; $(MAKE) clean ; find . \( -name core -o -name "*~" \) -print | xargs rm -f)
+		tar cvf nobots-$(VERSION).tar nobots-$(VERSION)
+		gzip -9 nobots-$(VERSION).tar
+		rm -fr nobots-$(VERSION)

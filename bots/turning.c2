@@ -1,0 +1,45 @@
+######################################################################
+#
+#  Weird robot design
+#  (C) 1996  Ultra & Loke coding union
+#
+######################################################################
+
+callback( 5, %collide );
+callback( 4, %no_wallfound );
+
+mode = 0;
+
+# This is a high speed maniac
+setspeed( getmaxspeed() );
+
+# Turn to a random position (woow, no intelligence here :-) )
+while( 1 ) {
+	if( mode == 0 ) {
+		heading = random % 3600;
+		setheading( heading );
+		while( getheading() != heading );
+	}
+	else {
+		found_wall = 1;
+		while( found_wall ) {
+			dir = random % 3600;
+			setheading( dir );
+			while( getheading() != dir );
+			wallscan( dir );
+		}
+		setspeed( getmaxspeed() );
+		mode = 0;
+	}
+}
+
+cfunc collide()
+{
+	mode = 1;
+}
+	
+
+cfunc no_wallfound()
+{
+	found_wall = 0;
+}

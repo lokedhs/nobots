@@ -1,0 +1,16 @@
+######################################################################
+#
+#  @LiT@ 'bot D3ziGN
+#  (C) 1996  Ultra & !Loke coding union
+#
+######################################################################
+
+# This is a high speed maniac
+setspeed( getmaxspeed() );
+
+# Turn to a random position (woow, no intelligence here :-) )
+while( 1 ) {
+
+
+
+}

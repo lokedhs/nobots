@@ -1,0 +1,56 @@
+callback( 1, %enemy_found );
+callback( 2, %enemy_not_found );
+
+while( 1 ) {
+
+	dir = 0;
+	found = 0;
+	while( !found && dir < 3600 ) {
+		dir +=225;	
+		while( scan( 225, dir ) != 0 );
+	}
+#	print(-4);
+
+	#  If we have found an enemy, fire at it, otherwise move to a different
+	#  place and start searching again
+	if( found ) {
+#		print(-1);
+		fire( founddir );
+	}
+	else {
+		move_random();
+	}
+
+}
+
+func move_random() {
+
+	newheading = random % 3600;
+	setheading( newheading );
+	
+	ustart = uptime();
+	setspeed( getmaxspeed() );
+	while( getspeed() != getmaxspeed() &&
+	       getheading() != newheading );
+	acctime = uptime() - ustart;
+
+	wstart = uptime();
+	while( (uptime() - wstart) < acctime );
+
+	setspeed( 0 );
+	while( getspeed() != 0 );
+
+#	print(-2);
+}
+
+cfunc enemy_found() {
+	found = 1;
+	foundx = getcb( 0 );
+	foundy = getcb( 1 );
+	founddir = getcb( 2 );
+	founddist = getcb( 3 );
+}
+
+cfunc enemy_not_found() {
+	found = 0;
+}

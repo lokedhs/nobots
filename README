@@ -1,0 +1,15 @@
+Welcome to NoBots!
+
+For installation instructions, see the file INSTALL.
+
+This game has been tested on the following platforms:
+
+	- Solaris 2.6 SPARC, Motif 1.2
+	- Linux/PPC, LessTif 0.81
+	- Linux/M68K, LessTif 0.81
+
+If you have successfully compiled and run the game on any other
+platforms, please send me a mail so that I can update the above list.
+
+Elias Mårtenson (elias-m@algonet.se)
+http://wombat.ludvika.se/~loke/nobots/

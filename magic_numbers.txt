@@ -1,0 +1,25 @@
+When a robot fires its weapon, the weapon status is set to:
+
+	weapon_recharge_status = weapon_power * weapon_explode_range
+
+
+Every update the recharge values are set as follows:
+
+	weapon_recharge_status -= weapon_recharge_speed
+	scanner_recharge_status -= scanner_recharge_speed
+
+
+When hit by a bullet (this formula should be affected by the distance to the
+bullet):
+
+	shields -= weapon_power
+
+
+When scanning for robots:
+
+	scanner_recharge_status = scan_width * 10
+
+
+Stuff to do:
+
+	o The bullet explode range is currently hardcoded to 1000

@@ -1,0 +1,285 @@
+!    robot assembler - robot assembly language
+!    Copyright (C) 1996-98  Elias Martenson (elias.martenson@sun.se)
+!
+!    This program is free software; you can redistribute it and/or modify
+!    it under the terms of the GNU General Public License as published by
+!    the Free Software Foundation; either version 2 of the License, or
+!    (at your option) any later version.
+!
+!    This program is distributed in the hope that it will be useful,
+!    but WITHOUT ANY WARRANTY; without even the implied warranty of
+!    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+!    GNU General Public License for more details.
+!
+!    You should have received a copy of the GNU General Public License
+!    along with this program; if not, write to the Free Software
+!    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+
+OPER move 2
+{
+  *arg1 = *arg0;
+  return 1;
+}
+
+OPER print 1
+{
+  printf( "robot: %d: %d\n", RobotGetID( current_robot ), *arg0 );
+  return 1;
+}
+
+OPER add 2
+{
+  *arg1 += *arg0;
+  return 1;
+}
+
+OPER sub 2
+{
+  *arg1 -= *arg0;
+  return 1;
+}
+
+OPER mul 2
+{
+  *arg1 *= *arg0;
+  return 1;
+}
+
+OPER div 2
+{
+  if( *arg0 == 0 ) {
+    runtime_warning( current_robot, "division by zero" );
+    return 0;
+  }
+  *arg1 /= *arg0;
+  return 1;
+}
+
+OPER neg 1
+{
+  *arg0 = -*arg0;
+  return 1;
+}
+
+OPER mod 2
+{
+  int ret = *arg1 % *arg0;
+  *arg1 = ret;
+  return 1;
+}
+
+OPER not 1
+{
+  *arg0 = !*arg0;
+  return 1;
+}
+
+OPER tsteq 2
+{
+  *arg1 = (*arg0 == *arg1);
+  return 1;
+}
+
+OPER tstne 2
+{
+  *arg1 = (*arg0 != *arg1);
+  return 1;
+}
+
+OPER tstlt 2
+{
+  *arg1 = (*arg0 > *arg1);
+  return 1;
+}
+
+OPER tstgt 2
+{
+  *arg1 = (*arg0 < *arg1);
+  return 1;
+}
+OPER tstle 2
+{
+  *arg1 = (*arg0 >= *arg1);
+  return 1;
+}
+
+OPER tstge 2
+{
+  *arg1 = (*arg0 <= *arg1);
+  return 1;
+}
+
+OPER tstand 2
+{
+  *arg1 = (*arg0 && *arg1);
+  return 1;
+}
+
+OPER tstor 2
+{
+  *arg1 = (*arg0 || *arg1);
+  return 1;
+}
+
+OPER jmp 1
+{
+  CHECK_PC( *arg0 );
+  program->pc = *arg0;
+  return 1;
+}
+
+OPER jpl 2
+{
+  if( *arg0 >= 0 ) {
+    CHECK_PC( *arg1 );
+    program->pc = *arg1;
+  }
+  return 1;
+}
+
+OPER jmi 2
+{
+  if( *arg0 < 0 ) {
+    CHECK_PC( *arg1 );
+    program->pc = *arg1;
+  }
+  return 1;
+}
+
+OPER jeq 2
+{
+  if( *arg0 == 0 ) {
+    CHECK_PC( *arg1 );
+    program->pc = *arg1;
+  }
+  return 1;
+}
+
+OPER jne 2
+{
+  if( *arg0 != 0 ) {
+    CHECK_PC( *arg1 );
+    program->pc = *arg1;
+  }
+  return 1;
+}
+
+OPER jsr 1
+{
+  CHECK_PC( *arg0 );
+  StackPushInt( program->sysstack, program->pc );
+  program->pc = *arg0;
+  return 1;
+}
+
+OPER rts 0
+{
+  if( StackGetSize( program->sysstack ) == 0 ) {
+    runtime_warning( current_robot, "rts with empty system stack" );
+    return 0;
+  }
+  program->pc = StackPopInt( program->sysstack );
+  return 1;
+}
+
+OPER lsl 2
+{
+  *arg1 <<= *arg0;
+  return 1;
+}
+
+OPER lsr 2
+{
+  *arg1 >>= *arg0;
+  return 1;
+}
+
+OPER exit 0
+{
+  printf( "exiting\n" );
+  exit( 0 );
+  return 1;
+}
+
+OPER push 1
+{
+  StackPushInt( program->usrstack, *arg0 );
+  return 1;
+}
+
+OPER pop 1
+{
+  if( StackGetSize( program->usrstack ) == 0 ) {
+    runtime_warning( current_robot, "pop from empty stack" );
+    return 0;
+  }
+  *arg0 = StackPopInt( program->usrstack );
+  return 1;
+}
+
+OPER random 1
+{
+  *arg0 = random();
+  return 1;
+}
+
+OPER callback 2
+{
+  if( *arg1 != -1 ) {
+    CHECK_PC( *arg1 );
+  }
+  if( *arg0 < 0 || *arg0 >= NUM_CALLBACKS ) {
+    runtime_warning( current_robot, "setting illegal callback" );
+    return 0;
+  }
+  program->callbacks[ *arg0 ] = *arg1;
+  return 1;
+}
+
+OPER getcallback 2
+{
+  if( *arg0 < 0 || *arg0 >= NUM_CALLBACKS ) {
+    runtime_warning( current_robot, "getting illegal callback" );
+    return 0;
+  }
+  *arg1 = program->callbacks[ *arg0 ];
+  return 1;
+}
+
+OPER rtc 0
+{
+  if( program->current_callback_values == NULL ) {
+    runtime_warning( current_robot, "rtc outside callback handler" );
+    return 0;
+  }
+  myfree( program->current_callback_values );
+  if( CircbufferNumValues( program->waiting_callbacks ) > 0 ) {
+    program->current_callback_values =
+      CircbufferPopPtr( program->waiting_callbacks );
+    program->pc = program->callbacks[ program->current_callback_values->callback_number ];
+  }
+  else {
+    program->current_callback_values = NULL;
+    program->pc = StackPopInt( program->sysstack );
+  }
+  return 1;
+}
+
+OPER getcb 2
+{
+  if( program->current_callback_values == NULL ) {
+    runtime_warning( current_robot, "getcb outside callback handler" );
+    return 0;
+  }
+  if( *arg0 < 0 || *arg0 >= MAX_CALLBACK_DATA ) {
+    runtime_warning( current_robot, "getcb illegal callback data" );
+    return 0;
+  }
+  *arg1 = program->current_callback_values->data[ *arg0 ];
+  return 1;
+}
+
+INCLUDE movement.def
+INCLUDE comms.def
+INCLUDE misc.def

@@ -1,0 +1,283 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <title>Machine instructions reference</title>
+  </head>
+
+  <body>
+    <h1>Machine instructions reference</h1>
+
+    <table width="100%" border=1 cellpadding=5 cellspacing=0>
+
+      <tr>
+	<th> Instruction </th>
+	<th> Synopsis </th>
+	<th> Description </th>
+      </tr>
+
+
+
+      <tr>
+	<th colspan=3> Numeric calculation instructions </th>
+      </tr>
+
+      <tr>
+	<th> <code>move</code> </th>
+	<td> <code>move source,dest</code> </td>
+	<td> Moves the integer <em>source</em> to <em>dest</em> </td>
+      </tr>
+
+      <tr>
+	<th> <code>add</code> </th>
+	<td> <code>add source,dest</code> </td>
+	<td> Adds <em>source</em> to <em>dest</em>, storing the result 
+	  in <em>dest</em>. </td>
+      </tr>
+
+      <tr>
+	<th> <code>sub</code> </th>
+	<td> <code>sub source,dest</code> </td>
+	<td> Subtracts <em>source</em> from <em>dest</em>, storing the result 
+	  in <em>dest</em>. </td>
+      </tr>
+
+      <tr>
+	<th> <code>mul</code> </th>
+	<td> <code>mul source,dest</code> </td>
+	<td> Multiplies <em>source</em> by <em>dest</em>, storing the result 
+	  in <em>dest</em>. </td>
+      </tr>
+
+      <tr>
+	<th> <code>div</code> </th>
+	<td> <code>div source,dest</code> </td>
+	<td> Divides <em>dest</em> by <em>source</em>, storing the result 
+	  in <em>dest</em>. </td>
+      </tr>
+
+      <tr>
+	<th> <code>neg</code> </th>
+	<td> <code>neg dest</code> </td>
+	<td> Negates <em>dest</em>. This instruction is identical to
+	  <code>sub 0,dest</code> </td>
+      </tr>
+
+      <tr>
+	<th> <code>mod</code> </th>
+	<td> <code>mod source,dest</code> </td>
+	<td> Calculates <em>source</em> modulo <em>dest</em>, storing
+	  the result in <em>dest</em>. </td>
+      </tr>
+
+      <tr>
+	<th> <code>lsl</code> </th>
+	<td> <code>lsl count,dest</code> </td>
+	<td> Shift the bits in <em>dest</em> left by <em>count</em>
+	  bits. </td>
+      </tr>
+
+      <tr>
+	<th> <code>lsr</code> </th>
+	<td> <code>lsr count,dest</code> </td>
+	<td> Shift the bits in <em>dest</em> right by <em>count</em>
+	  bits. </td>
+      </tr>
+
+
+
+      <tr>
+	<th colspan=3> Logical instructions </th>
+      </tr>
+
+      <tr>
+	<th> <code>not</code> </th>
+	<td> <code>not dest</code> </td>
+	<td> Performs a logical not operation on <em>dest</em>. If
+	  <em>dest</em> is 0 the result is 1. If <em>dest</em> is not
+	  0, the reult is 0. </td>
+      </tr>
+
+      <tr>
+	<th> <code>tsteq</code> </th>
+	<td> <code>tsteq source,dest</code> </td>
+	<td> If <em>source</em> and <em>dest</em> are equal, store 1
+	  in <em>dest</em>, otherwise store 0. </td>
+      </tr>
+
+      <tr>
+	<th> <code>tstne</code> </th>
+	<td> <code>tstne source,dest</code> </td>
+	<td> If <em>source</em> and <em>dest</em> are not equal, store 1
+	  in <em>dest</em>, otherwise store 0. </td>
+      </tr>
+
+      <tr>
+	<th> <code>tstlt</code> </th>
+	<td> <code>tstlt source,dest</code> </td>
+	<td> If <em>source</em> is less than <em>dest</em>, store 1
+	  in <em>dest</em>, otherwise store 0. </td>
+      </tr>
+
+      <tr>
+	<th> <code>tstgt</code> </th>
+	<td> <code>tstgt source,dest</code> </td>
+	<td> If <em>source</em> is greater than <em>dest</em>, store 1
+	  in <em>dest</em>, otherwise store 0. </td>
+      </tr>
+
+      <tr>
+	<th> <code>tstle</code> </th>
+	<td> <code>tstle source,dest</code> </td>
+	<td> If <em>source</em> is equal to or less than
+	  <em>dest</em>, store 1 in <em>dest</em>, otherwise store 0. </td>
+      </tr>
+
+      <tr>
+	<th> <code>tstge</code> </th>
+	<td> <code>tstge source,dest</code> </td>
+	<td> If <em>source</em> is equal to or greater than
+	  <em>dest</em>, store 1 in <em>dest</em>, otherwise store 0. </td>
+      </tr>
+
+      <tr>
+	<th> <code>tstand</code> </th>
+	<td> <code>tstand source,dest</code> </td>
+	<td> If both <em>source</em> and <em>dest</em> are true (not equal
+	  to 0) store 1 in dest, otherwise store 0. </td>
+      </tr>
+
+      <tr>
+	<th> <code>tstor</code> </th>
+	<td> <code>tstor source,dest</code> </td>
+	<td> If either <em>source</em> or <em>dest</em> is true (not equal
+	  to 0) store 1 in dest, otherwise store 0. </td>
+      </tr>
+
+
+
+      <tr>
+	<th colspan=3> Program flow instructions </th>
+      </tr>
+
+      <tr>
+	<th> <code>jmp</code> </th>
+	<td> <code>jmp location</code> </td>
+	<td> Jump to the location indicated by <em>location</em>. </td>
+      </tr>
+
+      <tr>
+	<th> <code>jpl</code> </th>
+	<td> <code> jpl value,location</code> </td>
+	<td> If <em>value</em> is greater than 0, Jump to the location
+	  indicated by <em>location</em>. </td>
+      </tr>
+
+      <tr>
+	<th> <code>jmi</code> </th>
+	<td> <code> jmi value,location</code> </td>
+	<td> If <em>value</em> is less than 0, Jump to the location
+	  indicated by <em>location</em>. </td>
+      </tr>
+
+      <tr>
+	<th> <code>jeq</code> </th>
+	<td> <code> jeq value,location</code> </td>
+	<td> If <em>value</em> is 0, Jump to the location indicated by
+	  <em>location</em>. </td>
+      </tr>
+
+      <tr>
+	<th> <code>jne</code> </th>
+	<td> <code> jne value,location</code> </td>
+	<td> If <em>value</em> is not equal to 0, Jump to the location
+	  indicated by <em>location</em>. </td>
+      </tr>
+
+      <tr>
+	<th> <code>jsr</code> </th>
+	<td> <code>jsr location</code> </td>
+	<td> Push the current PC on to the system stack and jump to
+	  the location specified by <em>location</em>. </td>
+      </tr>
+
+      <tr>
+	<th> <code>rts</code> </th>
+	<td> <code>rts</code> </td>
+	<td> Pop the top value off the system stack and jump to that
+	  location. </td>
+      </tr>
+
+
+
+      <tr>
+	<th colspan=3> Stack manipulation instructions </th>
+      </tr>
+
+      <tr>
+	<th> <code>push</code> </th>
+	<td> <code>push value</code> </td>
+	<td> Push <em>value</em> on to the user stack. </td>
+      </tr>
+
+      <tr>
+	<th> <code>pop</code> </th>
+	<td> <code>pop dest</code> </td>
+	<td> Pop the top value off the user stack and store it in
+	  <em>dest</em>. </td>
+      </tr>
+
+
+
+      <tr>
+	<th colspan=3> Callback functions </th>
+      </tr>
+
+      <tr>
+	<th> <code>callback</code> </th>
+	<td> <code>callback id,location</code> </td>
+	<td> Installs a callback handler for callback
+	  <em>id</em>. Whenever an event occurs that triggers this
+	  callback, the routine at <em>location</em> is
+	  called. Specifying -1 as the location removes the callback
+	  handler. </td>
+      </tr>
+
+      <tr>
+	<th> <code>getcallback</code> </th>
+	<td> <code>getcallback id,dest</code> </td>
+	<td> Stores the callback installed for callback <em>id</em> in 
+	  <em>dest</em>. If no callback is installed then the value -1 
+	  will be stored in the specified variable. </td>
+      </tr>
+
+      <tr>
+	<th> <code>rtc</code> </th>
+	<td> <code>rtc</code> </td>
+	<td> Returns from a callback handler. This instruction does
+	  the same thing as <code>rts</code> except that it also
+	  unblocks all callbacks.
+      </tr>
+
+      <tr>
+	<th> <code>getcb</code> </th>
+	<td> <code>getcb arg,dest</code> </td>
+	<td> Stores the callback data specified by <em>arg</em> in
+	  <em>dest</em>. </td>
+      </tr>
+
+
+      <tr>
+	<th colspan=3> Miscellaneous instructions </th>
+      </tr>
+
+      <tr>
+	<th> <code>random</code> </th>
+	<td> <code>random dest</code> </td>
+	<td> Stores a random number in <em>dest</em>. </td>
+      </tr>
+
+    </table>
+
+
+  </body>
+</html>

@@ -1,0 +1,14 @@
+safe fac;
+
+func fac( val )
+{
+	if( val <= 0 )  return 0;
+	if( val == 1 )  return 1;
+	return fac( val - 1 ) * val;
+}
+
+c = 0;
+while( c < 10 ) {
+	print( fac( c ) );
+	c++;
+}

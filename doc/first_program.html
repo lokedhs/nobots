@@ -1,0 +1,183 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <title>Explanation of a small program</title>
+  </head>
+
+  <body>
+    <h1>Explanation of a small program</h1>
+
+
+    <h2> Machine description </h2>
+
+    <p>
+      They say the best way to learn is to learn by example so in this 
+      section we'l take a look at a simple program that counts from 0
+      to 10 over and over again:
+    </p>
+
+    <pre>
+	#
+	#  This is a program that increases the contents of the
+	#  variable "counter" from 0 to 10. When it has reached 10 it
+	#  is reset to 0 again.
+	#
+	start:
+		move	0,counter	# initialize counter
+	loop:
+		add	1,counter	# add 1 to counter
+		move	counter,tmp	# copy counter to tmp
+		sub	10,tmp		# subtract 10 from tmp
+		jne	tmp,%loop	# if tmp is not 0, jump to loop
+		jmp	%start		# jump to the first instruction
+    </pre>
+
+    <p>
+      I will now go though each instruction in this program,
+      explaining what happens and hopefully even <em>why</em> it
+      happens.
+    </p>
+
+    <p>
+      First of all, it's important to understand the concept of
+      "symbol values". Every symbol has a value. Whenever a symbol
+      appears in an instruction the value of this symbol is stored in
+      the extension word of this instruction. This value is then
+      usually used to refer to a data memory location but it can also
+      be used to specify a location in program memory.
+    </p>
+
+    <p>
+      When I talk about "memory locations" I always talk about
+      locations in data memory. As was said earlier, there are no
+      commands dealing directly with program memory, so its hardly
+      ever mentioned.
+    </p>
+
+    <p>
+      The first 5 lines are comments. Comments start with a # and
+      extend to the end of the line. The first non-commented line is
+      the line:
+    </p>
+
+    <pre>
+		start:
+    </pre>
+
+    <p>
+      This is a label definition. What it does is that it <em>sets the 
+	value of the symbol to the PC of the next
+	instruction</em>. Since the next instruction is the first line 
+      of the program the value of the symbol <code>start</code> will
+      be 0.
+    </p>
+
+    <p>
+      The next instruction is:
+    </p>
+
+    <pre>
+		move	0,counter
+    </pre>
+
+    <p>
+      This instruction stores the value 0 in the variable
+      <code>counter</code>. Or, to be more precise, it stores the
+      value 0 into <em>the memory location pointed to by the value of
+	the symbol</em> <code>counter</code>.
+    </p>
+
+    <p>
+      Now, all of this sounds nice, but what really is the value of
+      the symbol <code>counter</code>? The answer is that during
+      assembly, the assembler finds all symbols that have not
+      receieved a value in some other way (i.e. through a label
+      definition like the one we saw on the previous line), allocates
+      one word of memory for each symbol and assigns the address to a
+      memory location to each symbol. We do not set the symbol value
+      of <code>counter</code> in our program so <code>counter</code>'s
+      symbol value will indeed be that of the address to an unused
+      memory location. Because of this we can simply take an unused
+      name whenever we need a storage location and the assembler will
+      automatically allocate it for us.
+    </p>
+
+    <p>
+      The next instruction is just another label definition. Since it
+      preceedes the second instruction in the program it will get the
+      symbol value 1.
+    </p>
+
+    <p>
+      The next instruction:
+    </p>
+
+    <pre>
+		add	1,counter
+    </pre>
+
+    <p>
+      adds the value 1 to the storage location pointed to by
+      <code>counter</code>. The next instruction:
+    </p>
+
+    <pre>
+		move	counter,tmp
+    </pre>
+
+    <p>
+      Here, we move the <em>contents in the memory location pointed to 
+	by the symbol value</em> of <code>counter</code> to the
+      contents of the memory location pointed to by the value of
+      <code>tmp</code>. <code>tmp</code> is a symbol just like
+      <code>counter</code> so its symbol value is assigned by the
+      assembler just like <code>counter</code>'s was.
+    </p>
+
+    <p>
+      The instruction:
+    </p>
+
+    <pre>
+		sub	10,tmp
+    </pre>
+
+    <p>
+      subtracts 10 from the storage location pointed to by
+      <code>tmp</code>. The next instruction:
+    </p>
+
+    <pre>
+		jne	tmp,%loop
+    </pre>
+
+    <p>
+      This means that the CPU should jump to the program memory
+      location that is the symbol value of <code>loop</code> if the
+      memory location pointed to by <code>tmp</code> is not 0.
+    </p>
+
+    <p>
+      The %-sign deserves some explanation. If we had written
+      <code>jne tmp,loop</code>
+      it wouldn't work, because the CPU would make a lookup in the
+      memory location pointed to by <code>loop</code> and then jump to
+      <em>that</em> location in program memory. The %-sign prevents
+      the memory lookup and uses the symbol value instead.
+    </p>
+
+    <p>
+      The last instruction:
+    </p>
+
+    <pre>
+		jmp	%start
+    </pre>
+
+    <p>
+      This instruction jumps to the first line in the program so that
+      it starts counting again.
+    </p>
+
+  </body>
+</html>

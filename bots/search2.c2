@@ -1,0 +1,221 @@
+CB_TAKE_DAMAGE = 0;
+CB_ENEMY_FOUND = 1;
+CB_ENEMY_NOT_FOUND = 2;
+CB_WALL_FOUND = 3;
+CB_WALL_NOT_FOUND = 4;
+CB_COLLIDE_WALL = 5;
+CB_MESSAGE_RECEIEVED = 6;
+CB_TIMEOUT = 7;
+
+
+CLOSE_WALL = 1000;
+
+
+
+target_dir = 0;
+robot_search_dir = 0;
+is_hit = 0;
+take_damage_timer = -1;
+evade_dir = -1;
+
+callback( CB_ENEMY_FOUND, %enemy_found_cb );
+callback( CB_ENEMY_NOT_FOUND, %enemy_not_found_cb );
+callback( CB_TAKE_DAMAGE, %take_damage );
+callback( CB_TIMEOUT, %timeout_cb );
+
+while( 1 ) {
+	move_until_wall( target_dir );
+	if( track_wall( target_dir ) ) {
+		target_dir = (target_dir + 1800) % 3600;
+	}
+}
+
+
+
+func move_until_wall( dir )
+{
+	old_wall_found = getcallback( CB_WALL_FOUND );
+	callback( CB_WALL_FOUND, %move_until_wall_callback );
+
+	setheading( dir );
+	while( getheading() != dir ) {
+		search_for_robots();
+	}
+
+	setspeed( getmaxspeed() );
+	foundwall = 0;
+	while( !foundwall ) {
+		wallscan( dir, CLOSE_WALL );
+		search_for_robots();
+	}
+	setspeed( 0 );
+
+	callback( CB_WALL_FOUND, old_wall_found );
+}
+
+cfunc move_until_wall_callback()
+{
+	foundwall = 1;
+}
+
+
+func track_wall( dir )
+{
+	old_wall_found = getcallback( CB_WALL_FOUND );
+#	callback( CB_WALL_FOUND, %track_wall_found_wall );
+	old_wall_not_found = getcallback( CB_WALL_NOT_FOUND );
+	callback( CB_WALL_NOT_FOUND, %track_wall_no_found_wall );
+	old_collide_wall = getcallback( CB_COLLIDE_WALL );
+	callback( CB_COLLIDE_WALL, %track_wall_collide );
+
+	rs = rand_sign();
+	newdir = change_dir( dir, 900 * rs );
+	clear_way_found = 0;
+	wallscan( newdir, CLOSE_WALL * 4 );
+	if( !clear_way_found ) {
+		newdir = change_dir( dir, 900 * -rs );
+		clear_way_found = 0;
+		wallscan( newdir, CLOSE_WALL * 4 );
+		if( !clear_way_found ) {
+			return 1;
+		}
+	}
+
+	setheading( newdir );
+	while( getheading() != newdir ) {
+		search_for_robots();
+	}
+
+	setspeed( getmaxspeed() );
+
+	clear_way_found = 0;
+	collided = 0;
+	while( !clear_way_found && !collided ) {
+		wallscan( dir, CLOSE_WALL * 4 );
+		search_for_robots();
+	}
+
+	callback( CB_WALL_FOUND, old_wall_found );
+	callback( CB_WALL_NOT_FOUND, old_wall_not_found );
+	callback( CB_COLLIDE_WALL, old_collide_wall );
+
+	return collided;
+}
+
+
+cfunc track_wall_no_found_wall()
+{
+	clear_way_found = 1;
+}
+
+
+cfunc track_wall_collide()
+{
+	collided = 1;
+}
+
+
+func search_for_robots()
+{
+	old_heading = getheading();
+
+	evade_shots();
+
+	was_found = 0;
+	enemy_found = 0;
+	if( scan( scan_direction, 900 ) == 0 ) {
+		scan_direction = change_dir( scan_direction, 900 );
+	}
+	while( enemy_found ) {
+
+		evade_shots();
+
+		was_found = 1;
+		fire( enemy_dir );
+		if( !is_hit ) {
+			setheading( enemy_dir );
+		}
+		if( enemy_dist > 200 ) {
+			setspeed( enemy_speed );
+		}
+		else {
+			setspeed( 0 );
+		}
+		scan( enemy_dir, 450 );
+	}
+
+	if( was_found ) {
+		setheading( oldheading );
+		setspeed( getmaxspeed() );
+	}
+}
+
+
+func evade_shots()
+{
+	if( is_hit ) {
+		if( evade_dir != -1 && getheading() == evade_dir ) {
+			evade_dir = change_dir( getheading(),
+						450 * rand_sign() );
+			setheading( evade_dir );
+		}
+		setspeed( getmaxspeed() );
+	}
+}
+
+
+cfunc enemy_found_cb()
+{
+	enemy_found = 1;
+	enemy_x = getcb( 0 );
+	enemy_y = getcb( 1 );
+	enemy_dir = getcb( 2 );
+	enemy_dist = getcb( 3 );
+	enemy_heading = getcb( 4 );
+	enemy_speed = getcb( 5 );
+	enemy_id = getcb( 6 );
+}
+
+cfunc enemy_not_found_cb()
+{
+	enemy_found = 0;
+}
+
+cfunc take_damage()
+{
+	is_hit = 1;
+	if( take_damage_timer != -1 ) {
+		deltimer( take_damage_timer );
+	}
+	take_damage_timer = addtimer( 50 );
+}
+
+cfunc timeout_cb()
+{
+	if( getcb( 0 ) == take_damage_timer ) {
+		is_hit = 0;
+		take_damage_timer = -1;
+		evade_dir = -1;
+	}
+}
+
+
+func rand_sign()
+{
+	if( random % 2 == 0 ) {
+		return -1;
+	}
+	else {
+		return 1;
+	}
+}
+
+
+func change_dir( dir, val )
+{
+	tmp = (dir + val) % 3600;
+	if( tmp < 0 ) {
+		tmp += 3600;
+	}
+	return tmp;
+}

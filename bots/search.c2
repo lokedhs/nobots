@@ -1,0 +1,163 @@
+#
+#  This robot is designed to search for one stationary enemy on a game field
+#  with few obstacles.
+#
+
+#
+#  Set up some constants
+#
+MAP_MAX_X = 100000;
+MAP_MAX_Y = 100000;
+CLOSE_DISTANCE = 500;
+ROW_HEIGHT = 10000;
+DIST_FROM_WALL = 500;
+
+
+
+callback( 1, %enemy_found );
+
+
+curr_row = DIST_FROM_WALL;
+curr_col = 0;
+while( 1 ) {
+
+	if( move_to( curr_col, curr_row ) == -1 ) {
+		while( found ) {
+			setheading( founddir );
+
+			if( direction_diff( getheading(), founddir ) < 450 ) {
+				setspeed( foundspeed );
+			}
+			else {
+				setspeed( 0 );
+			}
+
+			fire( founddir );
+
+			# wait for scanner or weapon to beome ready
+			while( getweaponstatus() > 0 && getscannerstatus() > 0 );
+			if( getscannerstatus() == 0 ) {
+				found = 0;
+				scan( founddir, 200 );
+			}
+		}
+	}
+
+
+	curr_row += ROW_HEIGHT;
+	if( curr_row >= MAP_MAX_Y - DIST_FROM_WALL ) {
+		curr_row = 0;
+	}
+
+	if( curr_col > DIST_FROM_WALL ) {
+		curr_col = DIST_FROM_WALL;
+	}
+	else {
+		curr_col = MAP_MAX_X - DIST_FROM_WALL;
+	}
+}
+
+
+#
+#  Move to within CLOSE_DISTANCE of point x,y.
+#  Returns the actual distance from the destination point
+#
+func move_to( x, y )
+{
+
+	old_cw = getcallback( 5 );
+	callback( 5, %move_to_collide_wall );
+
+
+	stopped = 0;
+	found = 0;
+
+
+	my_x = getxcoordinate();
+	my_y = getycoordinate();
+
+	dx = x - my_x;
+	dy = y - my_y;
+	heading = c_to_a( dx, dy );
+	range = c_to_r( dx, dy );
+
+	#
+	#  Check if we are "close enough"
+	#
+	if( range < CLOSE_DISTANCE ) {
+		callback( 5, old_cw );
+		return range;
+	}
+
+	#
+	#  Turn to the destination point and start moving towards it
+	#
+	setheading( heading );
+	while( getheading() != heading );
+
+	setspeed( getmaxspeed() );
+
+	scandir = 0;
+
+	while( !stopped && !found && range > CLOSE_DISTANCE ) {
+		dx = x - getxcoordinate();
+		dy = y - getycoordinate();
+		heading = c_to_a( dx, dy );
+		range = c_to_r( dx, dy );
+
+		#  Adjust the heading just to be on the safe side
+		setheading( heading );
+
+		#  Scan for enemies
+		if( getscannerstatus() == 0 ) {
+			scandir += 450;
+			if( scandir >= 3600 ) {
+				scandir = 0;
+			}
+			scan( scandir, 450 );
+		}
+	}
+
+	if( !stopped ) {
+		setspeed( 0 );
+		while( getspeed() > 0 );
+	}
+
+	if( found ) {
+		return -1;
+	}
+
+		
+	return range;
+}
+
+func direction_diff( r1, r2 )
+{
+	diff = abs( r2 - r1 );
+	if( diff > 1800 ) {
+		diff = 3600 - diff;
+	}
+	return diff;
+}
+
+func abs( n )
+{
+	if( n < 0 ) {
+		n = -n;
+	}
+	return n;
+}
+
+cfunc move_to_collide_wall()
+{
+	stopped = 1;
+}
+
+cfunc enemy_found()
+{
+	found = 1;
+	founddir = getcb( 2 );
+	founddist = getcb( 3 );
+	foundheading = getcb( 4 );
+	foundspeed = getcb( 5 );
+}

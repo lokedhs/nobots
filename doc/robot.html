@@ -1,0 +1,115 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <title>The robot definition file</title>
+  </head>
+
+  <body>
+    <h1>The robot definition file</h1>
+
+
+    <h2> General description </h2>
+
+    <p>
+      The robot description file contains information about a
+      robot. Empty lines and lines beginning with a #-sign are
+      ignored. All other lines consists of a keyword followed by a
+      colon and the data associated with that keyword.
+    </p>
+
+
+    <h2> Available keywords </h2>
+
+    <table width="100%" border=1 cellpadding=5 cellspacing=0>
+      <tr>
+	<th> Keyword </th>
+	<th> Description </th>
+      </tr>
+
+      <tr>
+	<th> name </th>
+	<td> The name of the robot </td>
+      </tr>
+
+      <tr>
+	<th> code </th>
+	<td> The name of the file containing the assembly code for
+	  this robot (see <em>Embedded code</em> below). </td>
+      </tr>
+
+      <tr>
+	<th> brake </th>
+	<td> Brake power. Higher values means faster braking. </td>
+      </tr>
+
+      <tr>
+	<th> accel </th>
+	<td> Acceleration. Higher values means faster
+	  acceleration. </td>
+      </tr>
+
+      <tr>
+	<th> turnspeed </th>
+	<td> The speed which the robot can turn. </td>
+      </tr>
+
+      <tr>
+	<th> maxspeed </th>
+	<td> The robots maximum speed. </td>
+      </tr>
+
+      <tr>
+	<th> shields </th>
+	<td> Shield power when the game starts. </td>
+      </tr>
+
+      <tr>
+	<th> scannerrecharge </th>
+	<td> The speed at which the scanners recharge after being
+	  used. </td>
+      </tr>
+
+      <tr>
+	<th> scannerrange </th>
+	<td> The range of the scanner. </th>
+      </tr>
+
+      <tr>
+	<th> weaponspeed </th>
+	<td> The speed of the bullets fired by the robot. </td>
+      </tr>
+
+      <tr>
+	<th> weaponrecharge </th>
+	<td> The speed at which the weapong recharges after being
+	  fired. </td>
+      </tr>
+
+      <tr>
+	<th> weaponpower </th>
+	<td> The amount of damage the bullets cause. </td>
+      </tr>
+
+      <tr>
+	<th> weaponrange </th>
+	<td> The range of the bullets fired by this robot.</td>
+      </tr>
+
+    </table>
+
+
+    <h2> Embedded code </h2>
+
+    <p>
+      It is possible to embed the assembler source in the robot
+      definition file. To do this, don't specify a source file using
+      the <em>code</em> keyword and use the special keyword
+      <em>end</em> to mark the end of the robot definition. Everything
+      after the <em>end</em> keyword will be read in as the assembly
+      source code for this robot.
+    </p>
+
+
+
+  </body>
+</html>
