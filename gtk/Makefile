@@ -17,7 +17,7 @@
 
 include ../Makefile.global
 
-CFLAGS = $(GTKCFLAGS) -I/usr/include/gnome-1.0 -I/usr/lib/gnome-libs/include
+CFLAGS = $(GTKCFLAGS)
 LDFLAGS = -L../common $(GTKLDFLAGS)
 
 LIB = libgtkgui.a

@@ -1,5 +1,6 @@
-#include <gnome.h>
 #include <stdio.h>
+
+#include <gtk/gtk.h>
 
 #include "interface.h"
 #include "support.h"
@@ -8,7 +9,7 @@ static GtkWidget *file_selector = NULL;
 
 static void robotfile_selected( void );
 
-void open_clicked( GtkButton *button, gpointer user_data )
+void load_robot( GtkButton *button, gpointer user_data )
 {
   if( file_selector == NULL ) {
     file_selector = gtk_file_selection_new( "Select robot descriptor file" );
@@ -25,14 +26,14 @@ void open_clicked( GtkButton *button, gpointer user_data )
   gtk_widget_show( file_selector );
 }
 
-void remove_clicked( GtkButton *button, gpointer user_data )
+void remove_robot( GtkButton *button, gpointer user_data )
 {
   printf( "remove\n" );
 }
 
 static void robotfile_selected( void )
 {
-  gchar *filename = gtk_file_selection_get_filename( GTK_FILE_SELECTION(file_selector) );
+  const gchar *filename = gtk_file_selection_get_filename( GTK_FILE_SELECTION(file_selector) );
 
   printf( "file: %s\n", filename );
 }
