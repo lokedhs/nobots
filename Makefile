@@ -77,7 +77,7 @@ makecommon:
 		(cd common ; $(MAKE))
 
 clean:
-		rm -f $(EXEC) *.o parser.c lexer.c oper_functions.c
+		rm -f $(MOTIFEXEC) $(GTKEXEC) *.o parser.c lexer.c oper_functions.c
 		rm -f oper_syntax.c
 		(for dir in $(SUBDIRS) ; do ( cd $$dir ; $(MAKE) clean ) ; done)
 
