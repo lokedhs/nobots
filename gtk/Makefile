@@ -17,12 +17,12 @@
 
 include ../Makefile.global
 
-CFLAGS = $(GTKCFLAGS)
-LDFLAGS = -L../common $(GTKLDFLAGS)
+CFLAGS += -I.. -I../common $(GTKCFLAGS)
+LDFLAGS += -L../common $(GTKLDFLAGS)
 
 LIB = libgtkgui.a
 
-OBJS = nobotsgtk.o interface.o support.o file_select.o
+OBJS = nobotsgtk.o interface.o support.o file_select.o robot_list_table.o
 
 all:		$(LIB)
 

@@ -4,15 +4,18 @@
 
 #include "interface.h"
 #include "support.h"
+#include "robot_list_table.h"
+
+GtkWidget *main_win;
 
 void init_mainwin( int *argc, char **argv )
 {
-  GtkWidget *main_win;
-
   gtk_set_locale ();
   gtk_init (argc, &argv);
 
   main_win = create_main_win();
+  init_robot_tree_table();
+
   gtk_widget_show( main_win );
 }
 

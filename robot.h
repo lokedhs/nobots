@@ -85,6 +85,7 @@ typedef struct {
 } Robot;
 
 #define robot_get_id(robot)		((robot)->id)
+#define robot_get_name(robot)		((robot)->robot_name)
 #define robot_get_x_coordinate(robot)	((int)((robot)->x_pos))
 #define robot_get_y_coordinate(robot)	((int)((robot)->y_pos))
 #define robot_get_heading(robot)		((robot)->current_heading)
