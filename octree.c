@@ -210,7 +210,7 @@ void octree_find_objs( Branch *subbranch,
       y1 <= subbranch->y1 &&
       x2 >= subbranch->x2 &&
       y2 >= subbranch->y2 ) {
-    objlist[ objlist_ptr++ ] = NULL;
+    objlist[ objlist_ptr++ ] = subbranch->objs;
     return;
   }
 
