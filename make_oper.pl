@@ -1,6 +1,6 @@
 #! /usr/bin/perl
 #    robot assembler - robot assembly language
-#    Copyright (C) 1996  Elias Martenson (elias.martenson@sun.se)
+#    Copyright (C) 1996  Elias Martenson (elias-m@algonet.se)
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
