@@ -134,7 +134,7 @@ void call_callback( Program *program, CallbackValues *cbvalues )
       program->current_callback_values = cbvalues;
     }
     else {
-      QueuePushPtr( program->waiting_callbacks, cbvalues );
+      queue_push_ptr( program->waiting_callbacks, cbvalues );
     }
   }
   else {

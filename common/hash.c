@@ -134,7 +134,7 @@ void hashbucket_deleteEntry( HashBucket *bucket, char *key )
   for( w = bucket->entries->first ; w != NULL ; w = w->next ) {
     if( strcmp( ((HashEntry *)(w->val.ptr))->key, key ) == 0 ) {
       hashentry_delete( (HashEntry *)w->val.ptr );
-      list_deleteListEntry( bucket->entries, w );
+      list_delete_list_entry( bucket->entries, w );
       break;
     }
   }

@@ -107,7 +107,7 @@ Robot *robot_create_with_id( char *def_file, int newid )
   ret->last_scanner_direction = 0;
   ret->last_scanner_width = 0;
 
-  ret->waiting_messages = QueueCreate();
+  ret->waiting_messages = queue_create();
   ret->listener_channel = 0;
 
   ret->timeouts = list_create();
@@ -125,11 +125,11 @@ void robot_delete( Robot *robot )
   Timeout *timeout;
 
   /* Delete the list of waiting callbacks */
-  while( QueueNumValues( robot->program->waiting_callbacks ) > 0 ) {
-    cbvalues = QueuePopPtr( robot->program->waiting_callbacks );
+  while( queue_num_values( robot->program->waiting_callbacks ) > 0 ) {
+    cbvalues = queue_pop_ptr( robot->program->waiting_callbacks );
     myfree( cbvalues );
   }
-  QueueDelete( robot->program->waiting_callbacks );
+  queue_delete( robot->program->waiting_callbacks );
 
   if( robot->program->current_callback_values != NULL ) {
     myfree( robot->program->current_callback_values );
@@ -162,20 +162,20 @@ void robot_delete( Robot *robot )
   free( robot->robot_dir );
 
   /* Delete the list of waiting messages */
-  while( QueueNumValues( robot->waiting_messages ) > 0 ) {
-    message = QueuePopPtr( robot->waiting_messages );
+  while( queue_num_values( robot->waiting_messages ) > 0 ) {
+    message = queue_pop_ptr( robot->waiting_messages );
     if( --message->refcnt == 0 ) {
       myfree( message->data );
       myfree( message );
     }
   }
-  QueueDelete( robot->waiting_messages );
+  queue_delete( robot->waiting_messages );
 
   /* Delete the list of waiting timeouts */
-  while( ListHasOneEntry( robot->timeouts ) ) {
-    timeout = ListGetLastPtr( robot->timeouts );
+  while( list_has_one_entry( robot->timeouts ) ) {
+    timeout = list_get_last_ptr( robot->timeouts );
     myfree( timeout );
-    list_deleteLast( robot->timeouts );
+    list_delete_last( robot->timeouts );
   }
   list_delete( robot->timeouts );
 
@@ -225,7 +225,7 @@ void robot_place_on_map( Robot *robot )
    *  If there are no free starting positions, just place the
    *  robot at a random position
    */
-  if( ListIsEmpty( free_pos_list ) ) {
+  if( list_is_empty( free_pos_list ) ) {
     robot->start_x = 50 + (random() % (MAP_MAX_X - 100));
     robot->start_y = 50 + (random() % (MAP_MAX_Y - 100));
   }
@@ -297,23 +297,23 @@ void robot_execute_instructions( Robot *robot )
       robot->program->sysstack = stack_create();
 
 
-      while( QueueNumValues( robot->program->waiting_callbacks ) > 0 ) {
-	cbvalues = QueuePopPtr( robot->program->waiting_callbacks );
+      while( queue_num_values( robot->program->waiting_callbacks ) > 0 ) {
+	cbvalues = queue_pop_ptr( robot->program->waiting_callbacks );
 	myfree( cbvalues );
       }
 
-      while( QueueNumValues( robot->waiting_messages ) > 0 ) {
-	message = QueuePopPtr( robot->waiting_messages );
+      while( queue_num_values( robot->waiting_messages ) > 0 ) {
+	message = queue_pop_ptr( robot->waiting_messages );
 	if( --message->refcnt == 0 ) {
 	  myfree( message->data );
 	  myfree( message );
 	}
       }
 
-      while( ListHasOneEntry( robot->timeouts ) ) {
-	timeout = ListGetLastPtr( robot->timeouts );
+      while( list_has_one_entry( robot->timeouts ) ) {
+	timeout = list_get_last_ptr( robot->timeouts );
 	myfree( timeout );
-	list_deleteLast( robot->timeouts );
+	list_delete_last( robot->timeouts );
       }
 
       robot->program->pc = 0;
@@ -388,12 +388,12 @@ void robot_update( Robot *robot )
 
   /* check the timeouts */
   end_timeouts = 0;
-  while( !ListIsEmpty( robot->timeouts ) && !end_timeouts ) {
-    timeout = ListGetFirstPtr( robot->timeouts );
+  while( !list_is_empty( robot->timeouts ) && !end_timeouts ) {
+    timeout = list_get_first_ptr( robot->timeouts );
     if( timeout->attime <= world_update_counter ) {
       make_cbvalues_call_callback( robot->program, CB_TIMEOUT, timeout->id );
       myfree( timeout );
-      list_deleteFirst( robot->timeouts );
+      list_delete_first( robot->timeouts );
     }
     else {
       end_timeouts = 1;
@@ -487,7 +487,7 @@ void robot_deleteTimeout( Robot *robot, int timeout_id )
     timeout = entry->val.ptr;
     if( timeout->id == timeout_id ) {
       myfree( timeout );
-      list_deleteListEntry( robot->timeouts, entry );
+      list_delete_list_entry( robot->timeouts, entry );
       break;
     }
   }

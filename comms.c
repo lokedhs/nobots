@@ -62,7 +62,7 @@ int send_message( Robot *robot, int dest, int message_id, int msglen,
       }
       found++;
       ret->refcnt++;
-      QueuePushPtr( w->waiting_messages, ret );
+      queue_push_ptr( w->waiting_messages, ret );
 
       make_cbvalues_call_callback( w->program, CB_MESSAGE_RECEIVED, robot->id,
 				   message_id, msglen );
@@ -77,11 +77,11 @@ int receieve_message( Robot *robot, int msgptr )
 {
   MessageData *message;
 
-  if( QueueNumValues( robot->waiting_messages ) == 0 ) {
+  if( queue_num_values( robot->waiting_messages ) == 0 ) {
     return 0;
   }
 
-  message = QueuePopPtr( robot->waiting_messages );
+  message = queue_pop_ptr( robot->waiting_messages );
 
   if( msgptr + message->len > robot->program->mem_size ) {
     if( --message->refcnt == 0 ) {

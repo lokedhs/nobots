@@ -296,7 +296,7 @@ void clean_strings( void )
 {
 	while( dup_strings->first != NULL ) {
 		myfree( dup_strings->last->val.ptr );
-		list_deleteListEntry( dup_strings, dup_strings->last );
+		list_delete_list_entry( dup_strings, dup_strings->last );
 	}
 }
 

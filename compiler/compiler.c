@@ -272,7 +272,7 @@ void clean_statement( void )
   /* cleanup the lstrdup list */
   while( dup_strings->first != NULL ) {
     myfree( dup_strings->last->val.ptr );
-    list_deleteListEntry( dup_strings, dup_strings->last );
+    list_delete_list_entry( dup_strings, dup_strings->last );
   }
 
   /* set the tmpvar level to 0 */

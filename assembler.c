@@ -388,7 +388,7 @@ Program *close_program( void )
     program->callbacks[ c ] = -1;
   }
 
-  program->waiting_callbacks = QueueCreate();
+  program->waiting_callbacks = queue_create();
   program->current_callback_values = NULL;
 
   /*

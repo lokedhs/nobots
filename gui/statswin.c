@@ -193,7 +193,7 @@ void close_statswin( StatsWindow *stats_window )
 {
   XtDestroyWidget( stats_window->stats_shell );
   myfree( stats_window );
-  list_deletePtr( statswindows, stats_window );
+  list_delete_ptr( statswindows, stats_window );
   printf( "deleted, num: %d\n", list_size( statswindows ) );
 }  
 

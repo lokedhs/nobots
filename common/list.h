@@ -36,22 +36,22 @@ typedef struct list_struct {
 } List;
 
 
-#define ListIsEmpty(list)		((list)->first == NULL)
-#define ListHasOneEntry(list)		((list)->first != NULL && \
+#define list_is_empty(list)		((list)->first == NULL)
+#define list_has_one_entry(list)	((list)->first != NULL && \
 					 ((list)->first == (list)->last))
-#define ListGetFirstPtr(list)		((list)->first->val.ptr)
-#define ListGetFirstInt(list)		((list)->first->val.i)
-#define ListGetLastPtr(list)		((list)->last->val.ptr)
-#define ListGetLastInt(list)		((list)->last->val.i)
-#define list_deleteFirst(list)		(list_deleteListEntry((list), \
-							     (list)->first))
-#define list_deleteLast(list)		(list_deleteListEntry((list),\
-							     (list)->last))
+#define list_get_first_ptr(list)	((list)->first->val.ptr)
+#define list_get_first_int(list)	((list)->first->val.i)
+#define list_get_last_ptr(list)		((list)->last->val.ptr)
+#define list_get_last_int(list)		((list)->last->val.i)
+#define list_delete_first(list)		(list_delete_list_entry((list), \
+								(list)->first))
+#define list_delete_last(list)		(list_delete_list_entry((list),\
+								(list)->last))
 
 List *list_create( void );
 void list_delete( List * );
-void list_deleteListEntry( List *, ListEntry * );
-void list_deletePtr( List *, void * );
+void list_delete_list_entry( List *, ListEntry * );
+void list_delete_ptr( List *, void * );
 void list_add_to_head_int( List *, int );
 void list_add_to_head_ptr( List *, void * );
 void list_add_to_tail_int( List *, int );

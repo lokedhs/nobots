@@ -254,9 +254,9 @@ OPER rtc 0
     return 0;
   }
   myfree( program->current_callback_values );
-  if( QueueNumValues( program->waiting_callbacks ) > 0 ) {
+  if( queue_num_values( program->waiting_callbacks ) > 0 ) {
     program->current_callback_values =
-      QueuePopPtr( program->waiting_callbacks );
+      queue_pop_ptr( program->waiting_callbacks );
     program->pc = program->callbacks[ program->current_callback_values->callback_number ];
   }
   else {

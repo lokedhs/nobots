@@ -124,12 +124,12 @@ void clear_map( void )
   gwo_start = NULL;
 
   if( start_point_list != NULL ) {
-    while( !ListIsEmpty( start_point_list ) ) {
+    while( !list_is_empty( start_point_list ) ) {
       StartPoint *tmp;
 
-      tmp = ListGetLastPtr( start_point_list );
+      tmp = list_get_last_ptr( start_point_list );
       myfree( tmp );
-      list_deleteLast( start_point_list );
+      list_delete_last( start_point_list );
     }
     list_delete( start_point_list );
   }

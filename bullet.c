@@ -69,7 +69,7 @@ Bullet *bullet_create( Robot *robot, int direction )
  */
 void bullet_delete( Bullet *bullet )
 {
-  list_deletePtr( bullet_list, bullet );
+  list_delete_ptr( bullet_list, bullet );
   myfree( bullet );
 }
 

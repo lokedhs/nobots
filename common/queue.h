@@ -32,15 +32,15 @@ typedef struct {
   int tail;
 } Queue;
 
-#define QueuePopInt(queue)		(QueuePop( (queue) ).i)
-#define QueuePopPtr(queue)		(QueuePop( (queue) ).ptr)
+#define queue_pop_int(queue)		(queue_pop( (queue) ).i)
+#define queue_pop_ptr(queue)		(queue_pop( (queue) ).ptr)
 
-Queue *QueueCreate( void );
-void QueueDelete( Queue * );
-QueueValue QueuePop( Queue * );
-void QueuePushInt( Queue *, int );
-void QueuePushPtr( Queue *, void * );
-void QueuePush( Queue *, QueueValue );
-int QueueNumValues( Queue * );
+Queue *queue_create( void );
+void queue_delete( Queue * );
+QueueValue queue_pop( Queue * );
+void queue_push_int( Queue *, int );
+void queue_push_ptr( Queue *, void * );
+void queue_push( Queue *, QueueValue );
+int queue_num_values( Queue * );
 
 #endif

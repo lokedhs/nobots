@@ -23,7 +23,7 @@
 #include "mem.h"
 #include "queue.h"
 
-Queue *QueueCreate( void )
+Queue *queue_create( void )
 {
   Queue *ret = mymalloc( sizeof( Queue ) );
 
@@ -35,13 +35,13 @@ Queue *QueueCreate( void )
   return ret;
 }
 
-void QueueDelete( Queue *queue )
+void queue_delete( Queue *queue )
 {
   myfree( queue->values );
   myfree( queue );
 }
 
-QueueValue QueuePop( Queue *queue )
+QueueValue queue_pop( Queue *queue )
 {
   QueueValue ret;
 
@@ -57,7 +57,7 @@ QueueValue QueuePop( Queue *queue )
   return ret;
 }
 
-void QueuePush( Queue *queue, QueueValue val )
+void queue_push( Queue *queue, QueueValue val )
 {
   queue->values[ queue->head++ ] = val;
   if( queue->head >= queue->size ) {
@@ -76,23 +76,23 @@ void QueuePush( Queue *queue, QueueValue val )
   }
 }
 
-void QueuePushInt( Queue *queue, int val )
+void queue_push_int( Queue *queue, int val )
 {
   QueueValue tmp;
 
   tmp.i = val;
-  QueuePush( queue, tmp );
+  queue_push( queue, tmp );
 }
 
-void QueuePushPtr( Queue *queue, void *val )
+void queue_push_ptr( Queue *queue, void *val )
 {
   QueueValue tmp;
 
   tmp.ptr = val;
-  QueuePush( queue, tmp );
+  queue_push( queue, tmp );
 }
 
-int QueueNumValues( Queue *queue )
+int queue_num_values( Queue *queue )
 {
   if( queue->head >= queue->tail ) {
     return queue->head - queue->tail;

@@ -242,7 +242,7 @@ void delete_object( int x, int y )
 	  y > (startpoint->y * ydiv) - NEAR_LINE &&
 	  y < (startpoint->y * ydiv) + NEAR_LINE ) {
 	myfree( startpoint );
-	list_deleteListEntry( start_point_list, tmp );
+	list_delete_list_entry( start_point_list, tmp );
       }
     }
   }

@@ -23,10 +23,10 @@
 #include "mem.h"
 #include "list.h"
 
-static void ListAddToHead( List *, ListEntry * );
-static void ListAddToTail( List *, ListEntry * );
-static void ListAddBefore( List *, ListEntry *, ListEntry * );
-static void ListAddAfter( List *, ListEntry *, ListEntry * );
+static void list_add_to_head( List *, ListEntry * );
+static void list_add_to_tail( List *, ListEntry * );
+static void list_add_before( List *, ListEntry *, ListEntry * );
+static void list_add_after( List *, ListEntry *, ListEntry * );
 
 List *list_create( void )
 {
@@ -55,7 +55,7 @@ void list_add_to_head_int( List *list, int val )
   ListEntry *entry = mymalloc( sizeof( ListEntry ) );
 
   entry->val.i = val;
-  ListAddToHead( list, entry );
+  list_add_to_head( list, entry );
 }
 
 void list_add_to_head_ptr( List *list, void *val )
@@ -63,10 +63,10 @@ void list_add_to_head_ptr( List *list, void *val )
   ListEntry *entry = mymalloc( sizeof( ListEntry ) );
 
   entry->val.ptr = val;
-  ListAddToHead( list, entry );
+  list_add_to_head( list, entry );
 }
 
-static void ListAddToHead( List *list, ListEntry *entry )
+static void list_add_to_head( List *list, ListEntry *entry )
 {
   entry->prev = NULL;
   if( list->first == NULL ) {
@@ -86,7 +86,7 @@ void list_add_to_tail_int( List *list, int val )
   ListEntry *entry = mymalloc( sizeof( ListEntry ) );
 
   entry->val.i = val;
-  ListAddToTail( list, entry );
+  list_add_to_tail( list, entry );
 }
 
 void list_add_to_tail_ptr( List *list, void *val )
@@ -94,7 +94,7 @@ void list_add_to_tail_ptr( List *list, void *val )
   ListEntry *entry = mymalloc( sizeof( ListEntry ) );
 
   entry->val.ptr = val;
-  ListAddToTail( list, entry );
+  list_add_to_tail( list, entry );
 }
 
 void list_add_before_ptr( List *list, ListEntry *entry, void *val )
@@ -102,7 +102,7 @@ void list_add_before_ptr( List *list, ListEntry *entry, void *val )
   ListEntry *newentry = mymalloc( sizeof( ListEntry ) );
 
   entry->val.ptr = val;
-  ListAddBefore( list, entry, newentry );
+  list_add_before( list, entry, newentry );
 }
 
 void list_add_before_int( List *list, ListEntry *entry, int val )
@@ -110,7 +110,7 @@ void list_add_before_int( List *list, ListEntry *entry, int val )
   ListEntry *newentry = mymalloc( sizeof( ListEntry ) );
 
   entry->val.i = val;
-  ListAddBefore( list, entry, newentry );
+  list_add_before( list, entry, newentry );
 }
 
 void list_add_after_ptr( List *list, ListEntry *entry, void *val )
@@ -118,7 +118,7 @@ void list_add_after_ptr( List *list, ListEntry *entry, void *val )
   ListEntry *newentry = mymalloc( sizeof( ListEntry ) );
 
   entry->val.ptr = val;
-  ListAddAfter( list, entry, newentry );
+  list_add_after( list, entry, newentry );
 }
 
 void list_add_after_int( List *list, ListEntry *entry, int val )
@@ -126,10 +126,10 @@ void list_add_after_int( List *list, ListEntry *entry, int val )
   ListEntry *newentry = mymalloc( sizeof( ListEntry ) );
 
   entry->val.i = val;
-  ListAddAfter( list, entry, newentry );
+  list_add_after( list, entry, newentry );
 }
 
-static void ListAddToTail( List *list, ListEntry *entry )
+static void list_add_to_tail( List *list, ListEntry *entry )
 {
   entry->next = NULL;
   if( list->first == NULL ) {
@@ -144,7 +144,7 @@ static void ListAddToTail( List *list, ListEntry *entry )
   }
 }
 
-static void ListAddBefore( List *list, ListEntry *entry, ListEntry *newentry )
+static void list_add_before( List *list, ListEntry *entry, ListEntry *newentry )
 {
   if( entry->prev == NULL ) {
     list->first = newentry;
@@ -157,7 +157,7 @@ static void ListAddBefore( List *list, ListEntry *entry, ListEntry *newentry )
   entry->prev = newentry;
 }
 
-static void ListAddAfter( List *list, ListEntry *entry, ListEntry *newentry )
+static void list_add_after( List *list, ListEntry *entry, ListEntry *newentry )
 {
   if( entry->next == NULL ) {
     list->last = newentry;
@@ -170,9 +170,9 @@ static void ListAddAfter( List *list, ListEntry *entry, ListEntry *newentry )
   entry->next = newentry;
 }
 
-void list_deleteListEntry( List *list, ListEntry *entry )
+void list_delete_list_entry( List *list, ListEntry *entry )
 {
-  if( ListHasOneEntry( list ) ) {
+  if( list_has_one_entry( list ) ) {
     if( list->first == entry ) {
       myfree( entry );
       list->first = NULL;
@@ -202,13 +202,13 @@ void list_deleteListEntry( List *list, ListEntry *entry )
   }
 }
 
-void list_deletePtr( List *list, void *ptr )
+void list_delete_ptr( List *list, void *ptr )
 {
   ListEntry *w = list->first;
 
   while( w != NULL ) {
     if( w->val.ptr == ptr ) {
-      list_deleteListEntry( list, w );
+      list_delete_list_entry( list, w );
       return;
     }
     w = w->next;
