@@ -19,21 +19,33 @@ include Makefile.global
 
 VERSION = 0.20
 
-EXEC = execute
+MOTIFEXEC = nobotsmotif
+GTKEXEC = nobotsgtk
 
 OBJS = execute.o evaluate.o assembler.o parser.o robot.o direction.o deffile.o \
 	scan.o octree.o bullet.o robot_move.o weapon.o map.o mapcommon.o \
 	comms.o robotlist.o
 
-EXTRALIBS = -lgui -lcommon -lXm -lXpm -lXt -lXext -lSM -lICE -lX11 -lm
-CFLAGS += -Icommon -I. $(XCFLAGS)
-LDFLAGS += -Lcommon -Lgui $(XLDFLAGS)
-SUBDIRS = common gui compiler mapedit
+MOTIFGUILDFLAGS = -Lgui
+MOTIFGUILIB = -lgui
 
-all:		$(EXEC)
+GTKGUILDFLAGS = -Lgtk
+GTKGUILIB = -lgtkgui
 
-$(EXEC):	$(OBJS) makegui makecommon
-		$(CC) $(LDFLAGS) -o $(EXEC) $(OBJS) $(EXTRALIBS) $(LIBS)
+EXTRALIBS = -lcommon
+CFLAGS += -Icommon -I.
+LDFLAGS += -Lcommon
+SUBDIRS = common gui gtk compiler mapedit
+
+LIBS = -lm
+
+all:		$(GTKEXEC)
+
+$(MOTIFEXEC):	$(OBJS) makegui makecommon
+		$(CC) $(LDFLAGS) $(MOTIFGUILDFLAGS) -o $(MOTIFEXEC) $(OBJS) $(MOTIFGUILIB) $(EXTRALIBS) $(XLDFLAGS) $(LIBS)
+
+$(GTKEXEC):	$(OBJS) makegtk makecommon
+		$(CC) $(LDFLAGS) $(GTKCFLAGS) $(GTKGUILDFLAGS) -o $(GTKEXEC) $(OBJS) $(GTKGUILIB) $(EXTRALIBS) $(GTKLDFLAGS) $(LIBS)
 
 parser.c:	parser.y lexer.c
 		$(YACC) parser.y
@@ -55,6 +67,9 @@ gui/libgui.a:	makegui
 
 makegui:
 		(cd gui ; $(MAKE))
+
+makegtk:
+		(cd gtk ; $(MAKE))
 
 common/libcommon.a: makecommon
 

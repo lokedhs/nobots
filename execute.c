@@ -38,6 +38,9 @@ int world_update_counter = 0;
 typedef void LogFunc( char *, ... );
 LogFunc *log_print = log_print_stderr;
 
+void init_mainwin( int *, char ** );
+void main_loop( void );
+
 int xmain( void )
 {
   int x = 100000;

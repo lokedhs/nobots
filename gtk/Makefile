@@ -1,5 +1,5 @@
 #    robot assembler - robot assembly language
-#    Copyright (C) 1996-98  Elias Martenson (elias.martenson@sun.se)
+#    Copyright (C) 1998  Elias Martenson (elias.martenson@sun.se)
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -15,18 +15,19 @@
 #    along with this program; if not, write to the Free Software
 #    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-CC = cc
-CFLAGS = -g -Wall
-#CFLAGS = -DFUNCPROTO=15 -g -v -I/usr/local/include
-XCFLAGS = -I/usr/X11R6/LessTif/Motif2.1/include -I/usr/X11R6/include
-LDFLAGS = $(CFLAGS)
-XLDFLAGS = -L/usr/X11R6/LessTif/Motif2.1/lib -L/usr/X11R6/lib -lXm -lXpm -lXt -lXext -lSM -lICE -lX11 -lm
-GTKCFLAGS += `gnome-config --cflags` `gtk-config --cflags` `libart-config --cflags` -I/usr/lib/gnome-libs/include
-GTKLDFLAGS += `gnome-config --libs` `libart-config --libs` -lgnome -lgnomesupport -lgnomeui `gtk-config --libs`
+include ../Makefile.global
 
-YACC = bison -y
-#YACC = yacc
-LEX = flex
-#LEX= lex
-PERL = perl
-AR = ar rc
+CFLAGS = $(GTKCFLAGS) -I/usr/include/gnome-1.0 -I/usr/lib/gnome-libs/include
+LDFLAGS = -L../common $(GTKLDFLAGS)
+
+LIB = libgtkgui.a
+
+OBJS = nobotsgtk.o interface.o support.o
+
+all:		$(LIB)
+
+$(LIB):		$(OBJS)
+		$(AR) $(LIB) $(OBJS)
+
+clean:
+		rm -f $(LIB) *.o
