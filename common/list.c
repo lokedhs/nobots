@@ -28,7 +28,7 @@ static void ListAddToTail( List *, ListEntry * );
 static void ListAddBefore( List *, ListEntry *, ListEntry * );
 static void ListAddAfter( List *, ListEntry *, ListEntry * );
 
-List *ListCreate( void )
+List *list_create( void )
 {
   List *ret = mymalloc( sizeof( List ) );
 
@@ -37,7 +37,7 @@ List *ListCreate( void )
   return ret;
 }
 
-void ListDelete( List *list )
+void list_delete( List *list )
 {
   ListEntry *w = list->first;
   ListEntry *wnext;
@@ -50,7 +50,7 @@ void ListDelete( List *list )
   myfree( list );
 }
 
-void ListAddToHeadInt( List *list, int val )
+void list_add_to_head_int( List *list, int val )
 {
   ListEntry *entry = mymalloc( sizeof( ListEntry ) );
 
@@ -58,7 +58,7 @@ void ListAddToHeadInt( List *list, int val )
   ListAddToHead( list, entry );
 }
 
-void ListAddToHeadPtr( List *list, void *val )
+void list_add_to_head_ptr( List *list, void *val )
 {
   ListEntry *entry = mymalloc( sizeof( ListEntry ) );
 
@@ -81,7 +81,7 @@ static void ListAddToHead( List *list, ListEntry *entry )
   }
 }
 
-void ListAddToTailInt( List *list, int val )
+void list_add_to_tail_int( List *list, int val )
 {
   ListEntry *entry = mymalloc( sizeof( ListEntry ) );
 
@@ -89,7 +89,7 @@ void ListAddToTailInt( List *list, int val )
   ListAddToTail( list, entry );
 }
 
-void ListAddToTailPtr( List *list, void *val )
+void list_add_to_tail_ptr( List *list, void *val )
 {
   ListEntry *entry = mymalloc( sizeof( ListEntry ) );
 
@@ -97,7 +97,7 @@ void ListAddToTailPtr( List *list, void *val )
   ListAddToTail( list, entry );
 }
 
-void ListAddBeforePtr( List *list, ListEntry *entry, void *val )
+void list_add_before_ptr( List *list, ListEntry *entry, void *val )
 {
   ListEntry *newentry = mymalloc( sizeof( ListEntry ) );
 
@@ -105,7 +105,7 @@ void ListAddBeforePtr( List *list, ListEntry *entry, void *val )
   ListAddBefore( list, entry, newentry );
 }
 
-void ListAddBeforeInt( List *list, ListEntry *entry, int val )
+void list_add_before_int( List *list, ListEntry *entry, int val )
 {
   ListEntry *newentry = mymalloc( sizeof( ListEntry ) );
 
@@ -113,7 +113,7 @@ void ListAddBeforeInt( List *list, ListEntry *entry, int val )
   ListAddBefore( list, entry, newentry );
 }
 
-void ListAddAfterPtr( List *list, ListEntry *entry, void *val )
+void list_add_after_ptr( List *list, ListEntry *entry, void *val )
 {
   ListEntry *newentry = mymalloc( sizeof( ListEntry ) );
 
@@ -121,7 +121,7 @@ void ListAddAfterPtr( List *list, ListEntry *entry, void *val )
   ListAddAfter( list, entry, newentry );
 }
 
-void ListAddAfterInt( List *list, ListEntry *entry, int val )
+void list_add_after_int( List *list, ListEntry *entry, int val )
 {
   ListEntry *newentry = mymalloc( sizeof( ListEntry ) );
 
@@ -170,7 +170,7 @@ static void ListAddAfter( List *list, ListEntry *entry, ListEntry *newentry )
   entry->next = newentry;
 }
 
-void ListDeleteListEntry( List *list, ListEntry *entry )
+void list_deleteListEntry( List *list, ListEntry *entry )
 {
   if( ListHasOneEntry( list ) ) {
     if( list->first == entry ) {
@@ -202,25 +202,25 @@ void ListDeleteListEntry( List *list, ListEntry *entry )
   }
 }
 
-void ListDeletePtr( List *list, void *ptr )
+void list_deletePtr( List *list, void *ptr )
 {
   ListEntry *w = list->first;
 
   while( w != NULL ) {
     if( w->val.ptr == ptr ) {
-      ListDeleteListEntry( list, w );
+      list_deleteListEntry( list, w );
       return;
     }
     w = w->next;
   }
 }
 
-void ListInitWalk( List *list )
+void list_init_walk( List *list )
 {
   list->walk_ptr = list->first;
 }
 
-int ListWalkNextInt( List *list, int *ret )
+int list_walk_next_int( List *list, int *ret )
 {
   if( list->walk_ptr == NULL ) {
     return 0;
@@ -230,7 +230,7 @@ int ListWalkNextInt( List *list, int *ret )
   return 1;
 }
 
-void *ListWalkNextPtr( List *list )
+void *list_walk_next_ptr( List *list )
 {
   void *ret;
 
@@ -242,7 +242,7 @@ void *ListWalkNextPtr( List *list )
   return ret;
 }
 
-int ListSize( List *list )
+int list_size( List *list )
 {
   int size = 0;
   ListEntry *w = list->first;
@@ -254,7 +254,7 @@ int ListSize( List *list )
   return size;
 }
 
-int ListGetPosInt( List *list, int index )
+int list_get_pos_int( List *list, int index )
 {
   ListEntry *e = list->first;
   int c = 0;
@@ -272,7 +272,7 @@ int ListGetPosInt( List *list, int index )
   }
 }
 
-void *ListGetPosPtr( List *list, int index )
+void *list_get_pos_ptr( List *list, int index )
 {
   ListEntry *e = list->first;
   int c = 0;

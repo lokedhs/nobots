@@ -41,24 +41,24 @@ typedef struct {
   int walk_pointer;		/* current position of the walk pointer */
 } HashTable;
 
-HashTable *HashTableCreate( HashFunc *, int );
-void HashTableDelete( HashTable * );
-void HashTableAddEntry( HashTable *, char *, void * );
-void HashTableDeleteEntry( HashTable *, char * );
-void *HashTableGetEntry( HashTable *, char * );
-void HashTableInitWalk( HashTable * );
-HashEntry *HashTableWalkNext( HashTable * );
+HashTable *hashtable_create( HashFunc *, int );
+void hashtable_delete( HashTable * );
+void hashtable_add_entry( HashTable *, char *, void * );
+void hashtable_deleteEntry( HashTable *, char * );
+void *hashtable_get_entry( HashTable *, char * );
+void hashtable_init_walk( HashTable * );
+HashEntry *hashtable_walk_next( HashTable * );
 
-HashBucket *HashBucketCreate( void );
-void HashBucketDelete( HashBucket * );
-void HashBucketAddEntry( HashBucket *, char *, void * );
-void HashBucketDeleteEntry( HashBucket *, char * );
-void *HashBucketGetEntry( HashBucket *, char * );
-void HashBucketInitWalk( HashBucket * );
-HashEntry *HashBucketWalkNext( HashBucket * );
+HashBucket *hashbucket_create( void );
+void hashbucket_delete( HashBucket * );
+void hashbucket_add_entry( HashBucket *, char *, void * );
+void hashbucket_deleteEntry( HashBucket *, char * );
+void *hashbucket_get_entry( HashBucket *, char * );
+void hashbucket_init_walk( HashBucket * );
+HashEntry *hashbucket_walk_next( HashBucket * );
 
-HashEntry *HashEntryCreate( char *, void * );
-void HashEntryDelete( HashEntry * );
+HashEntry *hashentry_create( char *, void * );
+void hashentry_delete( HashEntry * );
 
 int hash_std_func( char * );
 

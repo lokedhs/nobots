@@ -91,8 +91,8 @@ Program *new_program_fd( FILE *fp, int line )
   code = mymalloc( 10 * sizeof( Instruction ) );
   code_length = 10;
   code_pos = 0;
-  symbol_table = HashTableCreate( NULL, 0 );
-  define_table = HashTableCreate( NULL, 0 );
+  symbol_table = hashtable_create( NULL, 0 );
+  define_table = hashtable_create( NULL, 0 );
   asm_ok = 1;
   src_line = line;
 
@@ -178,7 +178,7 @@ void make_arg( int *code_ptr, int type, ArgType val, int *retflags, ptrdiff_t re
   case ASMARG_ABSOLUTE:
   case ASMARG_INDIRECT:
     symbol_entry = find_or_create_symbol_entry( val.s );
-    ListAddToTailInt( symbol_entry->refs, retarg_offset );
+    list_add_to_tail_int( symbol_entry->refs, retarg_offset );
     code_ptr[ retarg_offset ] = mem_offset;
     break;
 
@@ -234,7 +234,7 @@ void add_define( char *name, int value )
   DefineEntry *tmp = mymalloc( sizeof( DefineEntry ) );
 
   tmp->value = value;
-  HashTableAddEntry( define_table, name, tmp );
+  hashtable_add_entry( define_table, name, tmp );
 }
 
 
@@ -242,7 +242,7 @@ int get_define( char *name, int *error_ret )
 {
   DefineEntry *tmp;
 
-  if( (tmp = HashTableGetEntry( define_table, name )) == NULL ) {
+  if( (tmp = hashtable_get_entry( define_table, name )) == NULL ) {
     asm_error( "symbol not defined: %s", name );
     *error_ret = 1;
     return 0;
@@ -256,15 +256,15 @@ static SymbolEntry *find_or_create_symbol_entry( char *name )
 {
   SymbolEntry *ret;
 
-  if( (ret = HashTableGetEntry( symbol_table, name )) == NULL ) {
+  if( (ret = hashtable_get_entry( symbol_table, name )) == NULL ) {
     ret = mymalloc( sizeof( SymbolEntry ) );
-    ret->refs = ListCreate();
+    ret->refs = list_create();
     ret->is_set = 0;
     ret->value = 0;
     ret->is_array = 0;
     ret->size = 1;
     ret->array_values = NULL;
-    HashTableAddEntry( symbol_table, name, ret );
+    hashtable_add_entry( symbol_table, name, ret );
   }
   return ret;
 }
@@ -291,20 +291,20 @@ Program *close_program( void )
 
   if( !asm_ok ) {
     /* delete the symbol table */
-    HashTableInitWalk( symbol_table );
-    while( (e = HashTableWalkNext( symbol_table )) != NULL ) {
+    hashtable_init_walk( symbol_table );
+    while( (e = hashtable_walk_next( symbol_table )) != NULL ) {
       myfree( e->data );
-      HashTableDeleteEntry( symbol_table, e->key );
+      hashtable_deleteEntry( symbol_table, e->key );
     }
-    HashTableDelete( symbol_table );
+    hashtable_delete( symbol_table );
 
     /* delete the define table */
-    HashTableInitWalk( define_table );
-    while( (e = HashTableWalkNext( define_table )) != NULL ) {
+    hashtable_init_walk( define_table );
+    while( (e = hashtable_walk_next( define_table )) != NULL ) {
       myfree( e->data );
-      HashTableDeleteEntry( define_table, e->key );
+      hashtable_deleteEntry( define_table, e->key );
     }
-    HashTableDelete( define_table );
+    hashtable_delete( define_table );
 
     /* delete the memory allocated for code */
     myfree( code );
@@ -313,10 +313,10 @@ Program *close_program( void )
   }
 
   program = mymalloc( sizeof( Program ) );
-  memory_init = ListCreate();
+  memory_init = list_create();
 
-  HashTableInitWalk( symbol_table );
-  while( (e = HashTableWalkNext( symbol_table )) != NULL ) {
+  hashtable_init_walk( symbol_table );
+  while( (e = hashtable_walk_next( symbol_table )) != NULL ) {
     symbol_entry = e->data;
     if( symbol_entry->is_set ) {
       val = symbol_entry->value;
@@ -340,18 +340,18 @@ Program *close_program( void )
 	 *  the data begins, so that value is first tacked on to
 	 *  the head of the list.
 	 */
-	ListAddToHeadInt( symbol_entry->array_values, val );
-	ListAddToTailPtr( memory_init, symbol_entry->array_values );
+	list_add_to_head_int( symbol_entry->array_values, val );
+	list_add_to_tail_ptr( memory_init, symbol_entry->array_values );
       }
     }
-    ListInitWalk( symbol_entry->refs );
-    while( ListWalkNextInt( symbol_entry->refs, &ref ) ) {
+    list_init_walk( symbol_entry->refs );
+    while( list_walk_next_int( symbol_entry->refs, &ref ) ) {
       ((int *)code)[ ref ] += val;
     }
-    ListDelete( symbol_entry->refs );
+    list_delete( symbol_entry->refs );
     myfree( symbol_entry );
   }
-  HashTableDelete( symbol_table );
+  hashtable_delete( symbol_table );
 
   code = myrealloc( code, code_pos * sizeof( Instruction ) );
   program->code = code;
@@ -364,22 +364,22 @@ Program *close_program( void )
   /*
    *  Initialize the memory
    */
-  ListInitWalk( memory_init );
-  while( (init_data = ListWalkNextPtr( memory_init )) != NULL ) {
-    ListInitWalk( init_data );
-    ListWalkNextInt( init_data, &offset );
-    while( ListWalkNextInt( init_data, &pos ) ) {
+  list_init_walk( memory_init );
+  while( (init_data = list_walk_next_ptr( memory_init )) != NULL ) {
+    list_init_walk( init_data );
+    list_walk_next_int( init_data, &offset );
+    while( list_walk_next_int( init_data, &pos ) ) {
       program->mem[ offset++ ] = pos;
     }
-    ListDelete( init_data );
+    list_delete( init_data );
   }
-  ListDelete( memory_init );
+  list_delete( memory_init );
 
   /*
    *  Set up the stacks
    */
-  program->usrstack = StackCreate();
-  program->sysstack = StackCreate();
+  program->usrstack = stack_create();
+  program->sysstack = stack_create();
 
   /*
    *  Clear the callback list
@@ -388,7 +388,7 @@ Program *close_program( void )
     program->callbacks[ c ] = -1;
   }
 
-  program->waiting_callbacks = CircbufferCreate();
+  program->waiting_callbacks = QueueCreate();
   program->current_callback_values = NULL;
 
   /*

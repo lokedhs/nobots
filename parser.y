@@ -68,9 +68,9 @@ void clean_strings( void );
 
 %%
 
-start:		{ dup_strings = ListCreate(); } input {
+start:		{ dup_strings = list_create(); } input {
 					clean_strings();
-					ListDelete( dup_strings );
+					list_delete( dup_strings );
 				}
 		;
 
@@ -210,7 +210,7 @@ intexpr:	  INTEGER	{
 
 declaration:	  ARRAY SYMBOL optional_int '['
 				{
-					array_init_list = ListCreate();
+					array_init_list = list_create();
 					array_init_size = 0;
 				}
 			initlist ']'
@@ -247,7 +247,7 @@ initlist:	  initlist_int
 		;
 
 initlist_int:	  integer	{
-					ListAddToTailInt( array_init_list, $1 );
+					list_add_to_tail_int( array_init_list, $1 );
 					array_init_size++;
 				}
 		;
@@ -288,7 +288,7 @@ char *lstrdup( char *str )
 		fprintf( stderr, "Couldn't strdup\n" );
 		exit( 1 );
 	}
-	ListAddToTailPtr( dup_strings, str2 );
+	list_add_to_tail_ptr( dup_strings, str2 );
 	return str2;
 }
 
@@ -296,7 +296,7 @@ void clean_strings( void )
 {
 	while( dup_strings->first != NULL ) {
 		myfree( dup_strings->last->val.ptr );
-		ListDeleteListEntry( dup_strings, dup_strings->last );
+		list_deleteListEntry( dup_strings, dup_strings->last );
 	}
 }
 

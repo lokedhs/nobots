@@ -22,12 +22,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <unistd.h>
 
 #include "mem.h"
 #include "lang.h"
 #include "robot.h"
 #include "bullet.h"
-#include "circbuffer.h"
+#include "queue.h"
 #include "callback_num.h"
 #include "comms.h"
 #include "timeout.h"
@@ -63,12 +64,12 @@ Robot *current_robot;
 
 static int robot_id_counter = 0;
 
-Robot *RobotCreate( char *def_file )
+Robot *robot_create( char *def_file )
 {
-  return RobotCreateWithID( def_file, robot_id_counter++ );
+  return robot_create_with_id( def_file, robot_id_counter++ );
 }
 
-Robot *RobotCreateWithID( char *def_file, int newid )
+Robot *robot_create_with_id( char *def_file, int newid )
 {
   Robot *ret = mymalloc( sizeof( Robot ) );
   int cwd_size;
@@ -106,10 +107,10 @@ Robot *RobotCreateWithID( char *def_file, int newid )
   ret->last_scanner_direction = 0;
   ret->last_scanner_width = 0;
 
-  ret->waiting_messages = CircbufferCreate();
+  ret->waiting_messages = QueueCreate();
   ret->listener_channel = 0;
 
-  ret->timeouts = ListCreate();
+  ret->timeouts = list_create();
 
   log_print( "Loaded robot: %s, id: %d", ret->robot_name, ret->id );
 
@@ -117,18 +118,18 @@ Robot *RobotCreateWithID( char *def_file, int newid )
 }
 
 
-void RobotDelete( Robot *robot )
+void robot_delete( Robot *robot )
 {
   CallbackValues *cbvalues;
   MessageData *message;
   Timeout *timeout;
 
   /* Delete the list of waiting callbacks */
-  while( CircbufferNumValues( robot->program->waiting_callbacks ) > 0 ) {
-    cbvalues = CircbufferPopPtr( robot->program->waiting_callbacks );
+  while( QueueNumValues( robot->program->waiting_callbacks ) > 0 ) {
+    cbvalues = QueuePopPtr( robot->program->waiting_callbacks );
     myfree( cbvalues );
   }
-  CircbufferDelete( robot->program->waiting_callbacks );
+  QueueDelete( robot->program->waiting_callbacks );
 
   if( robot->program->current_callback_values != NULL ) {
     myfree( robot->program->current_callback_values );
@@ -161,22 +162,22 @@ void RobotDelete( Robot *robot )
   free( robot->robot_dir );
 
   /* Delete the list of waiting messages */
-  while( CircbufferNumValues( robot->waiting_messages ) > 0 ) {
-    message = CircbufferPopPtr( robot->waiting_messages );
+  while( QueueNumValues( robot->waiting_messages ) > 0 ) {
+    message = QueuePopPtr( robot->waiting_messages );
     if( --message->refcnt == 0 ) {
       myfree( message->data );
       myfree( message );
     }
   }
-  CircbufferDelete( robot->waiting_messages );
+  QueueDelete( robot->waiting_messages );
 
   /* Delete the list of waiting timeouts */
   while( ListHasOneEntry( robot->timeouts ) ) {
     timeout = ListGetLastPtr( robot->timeouts );
     myfree( timeout );
-    ListDeleteLast( robot->timeouts );
+    list_deleteLast( robot->timeouts );
   }
-  ListDelete( robot->timeouts );
+  list_delete( robot->timeouts );
 
   /* Delete all bullets owned by this robot */
   delete_bullets_from_robot( robot );
@@ -189,9 +190,9 @@ void RobotDelete( Robot *robot )
 /*
  *  Place the robot at a random position
  */
-void RobotPlaceOnMap( Robot *robot )
+void robot_place_on_map( Robot *robot )
 {
-  List *free_pos_list = ListCreate();
+  List *free_pos_list = list_create();
   StartPoint *startpoint;
   Robot *w;
   int index_save;
@@ -202,11 +203,11 @@ void RobotPlaceOnMap( Robot *robot )
    */
   if( start_point_list != NULL ) {
     index_save = robot_list->walkindex;
-    ListInitWalk( start_point_list );
-    while( (startpoint = ListWalkNextPtr( start_point_list )) != NULL ) {
+    list_init_walk( start_point_list );
+    while( (startpoint = list_walk_next_ptr( start_point_list )) != NULL ) {
       found = 0;
-      RobotListInitWalk( robot_list );
-      while( (w = RobotListWalkNext( robot_list )) != NULL ) {
+      robotlist_init_walk( robot_list );
+      while( (w = robotlist_walk_next( robot_list )) != NULL ) {
 	if( startpoint->x == w->start_x &&
 	    startpoint->y == w->start_y ) {
 	  found = 1;
@@ -214,7 +215,7 @@ void RobotPlaceOnMap( Robot *robot )
 	}
       }
       if( !found ) {
-	ListAddToTailPtr( free_pos_list, startpoint );
+	list_add_to_tail_ptr( free_pos_list, startpoint );
       }
     }
     robot_list->walkindex = index_save;
@@ -229,22 +230,22 @@ void RobotPlaceOnMap( Robot *robot )
     robot->start_y = 50 + (random() % (MAP_MAX_Y - 100));
   }
   else {
-    startpoint = ListGetPosPtr( free_pos_list,
-				random() % ListSize( free_pos_list ) );
+    startpoint = list_get_pos_ptr( free_pos_list,
+				random() % list_size( free_pos_list ) );
     robot->start_x = startpoint->x;
     robot->start_y = startpoint->y;
   }
   robot->x_pos = robot->start_x;
   robot->y_pos = robot->start_y;
 
-  ListDelete( free_pos_list );
+  list_delete( free_pos_list );
 }
 
 /*
  *  Set the robot destination speed
  */
 
-void RobotSetDestinationSpeed( Robot *robot, int newspeed )
+void robot_set_destination_speed( Robot *robot, int newspeed )
 {
   if( newspeed < 0 ) {
     robot->destination_speed = 0;
@@ -262,7 +263,7 @@ void RobotSetDestinationSpeed( Robot *robot, int newspeed )
  *  Set the robot destination heading
  */
 
-void RobotSetDestinationHeading( Robot *robot, int newheading )
+void robot_set_destination_heading( Robot *robot, int newheading )
 {
   robot->destination_heading = fix_direction( newheading );
 }
@@ -274,7 +275,7 @@ void RobotSetDestinationHeading( Robot *robot, int newheading )
  *  (i.e. 10 cycles for each time unit in the game)
  */
 
-void RobotExecuteInstructions( Robot *robot )
+void robot_execute_instructions( Robot *robot )
 {
   int c;
   CallbackValues *cbvalues;
@@ -290,19 +291,19 @@ void RobotExecuteInstructions( Robot *robot )
        *  Clear the user and system stacks, clear the callbacks.
        *  Set the PC to 0 (restart the program)
        */
-      StackDelete( robot->program->usrstack );
-      StackDelete( robot->program->sysstack );
-      robot->program->usrstack = StackCreate();
-      robot->program->sysstack = StackCreate();
+      stack_delete( robot->program->usrstack );
+      stack_delete( robot->program->sysstack );
+      robot->program->usrstack = stack_create();
+      robot->program->sysstack = stack_create();
 
 
-      while( CircbufferNumValues( robot->program->waiting_callbacks ) > 0 ) {
-	cbvalues = CircbufferPopPtr( robot->program->waiting_callbacks );
+      while( QueueNumValues( robot->program->waiting_callbacks ) > 0 ) {
+	cbvalues = QueuePopPtr( robot->program->waiting_callbacks );
 	myfree( cbvalues );
       }
 
-      while( CircbufferNumValues( robot->waiting_messages ) > 0 ) {
-	message = CircbufferPopPtr( robot->waiting_messages );
+      while( QueueNumValues( robot->waiting_messages ) > 0 ) {
+	message = QueuePopPtr( robot->waiting_messages );
 	if( --message->refcnt == 0 ) {
 	  myfree( message->data );
 	  myfree( message );
@@ -312,7 +313,7 @@ void RobotExecuteInstructions( Robot *robot )
       while( ListHasOneEntry( robot->timeouts ) ) {
 	timeout = ListGetLastPtr( robot->timeouts );
 	myfree( timeout );
-	ListDeleteLast( robot->timeouts );
+	list_deleteLast( robot->timeouts );
       }
 
       robot->program->pc = 0;
@@ -334,7 +335,7 @@ void RobotExecuteInstructions( Robot *robot )
  *    Check the timeouts
  */
 
-void RobotUpdate( Robot *robot )
+void robot_update( Robot *robot )
 {
   int turn_val;
   Timeout *timeout;
@@ -392,7 +393,7 @@ void RobotUpdate( Robot *robot )
     if( timeout->attime <= world_update_counter ) {
       make_cbvalues_call_callback( robot->program, CB_TIMEOUT, timeout->id );
       myfree( timeout );
-      ListDeleteFirst( robot->timeouts );
+      list_deleteFirst( robot->timeouts );
     }
     else {
       end_timeouts = 1;
@@ -403,7 +404,7 @@ void RobotUpdate( Robot *robot )
 
 }
 
-void RobotTakeDamage( Robot *robot, int damage )
+void robot_take_damage( Robot *robot, int damage )
 {
   int damage2 = MIN( damage, robot->current_shields );
 
@@ -414,12 +415,12 @@ void RobotTakeDamage( Robot *robot, int damage )
     }
     else {
       log_print( "Robot %s destroyed", robot->robot_name );
-      RobotListDeleteRobot( robot_list, robot );
+      robotlist_delete_robot( robot_list, robot );
     }
   }
 }
 
-int RobotScan( Robot *robot, int scan_direction, int scan_width )
+int robot_scan( Robot *robot, int scan_direction, int scan_width )
 {
 
   if( robot->scanner_recharge_status > 0 ) {
@@ -434,12 +435,12 @@ int RobotScan( Robot *robot, int scan_direction, int scan_width )
   return 0;
 }
 
-void RobotWallScan( Robot *robot, int direction, int range )
+void robot_wallscan( Robot *robot, int direction, int range )
 {
   scan_for_walls( robot, direction, range );
 }
 
-int RobotAddTimeout( Robot *robot, int attime )
+int robot_add_timeout( Robot *robot, int attime )
 {
   ListEntry *entry;
   ListEntry *timeout_pos = NULL;
@@ -467,16 +468,16 @@ int RobotAddTimeout( Robot *robot, int attime )
   }
 
   if( entry == NULL ) {
-    ListAddToTailPtr( robot->timeouts, ret );
+    list_add_to_tail_ptr( robot->timeouts, ret );
   }
   else {
-    ListAddAfterPtr( robot->timeouts, timeout_pos, ret );
+    list_add_after_ptr( robot->timeouts, timeout_pos, ret );
   }
 
   return ret->id;
 }
 
-void RobotDeleteTimeout( Robot *robot, int timeout_id )
+void robot_deleteTimeout( Robot *robot, int timeout_id )
 {
   ListEntry *entry;
   Timeout *timeout;
@@ -486,7 +487,7 @@ void RobotDeleteTimeout( Robot *robot, int timeout_id )
     timeout = entry->val.ptr;
     if( timeout->id == timeout_id ) {
       myfree( timeout );
-      ListDeleteListEntry( robot->timeouts, entry );
+      list_deleteListEntry( robot->timeouts, entry );
       break;
     }
   }

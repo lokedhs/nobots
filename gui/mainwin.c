@@ -69,7 +69,7 @@ extern Widget log_text;
 extern Widget map_fileselect;
 extern RobotList *robot_list;
 extern List *bullet_list;
-extern multi_buffer_method;
+extern int multi_buffer_method;
 
 XtIntervalId timeout_id;
 int timeout_active = 0;
@@ -434,8 +434,8 @@ void delete_robot_callback( Widget w, XtPointer user_data,
   XmListGetSelectedPos( robot_list_widget, &pos_list, &pos_count );
 
   for( c = pos_count - 1 ; c >= 0 ; c-- ) {
-    robot = RobotListGetRobotByIndex( robot_list, pos_list[ c ] - 1 );
-    RobotListDeleteRobot( robot_list, robot );
+    robot = robotlist_get_robot_by_index( robot_list, pos_list[ c ] - 1 );
+    robotlist_delete_robot( robot_list, robot );
   }
   XtFree( (XtPointer)pos_list );
 }
@@ -459,21 +459,21 @@ void reload_robot( int robot_index )
   Robot *robot;
   Robot *new_robot;
 
-  robot = RobotListGetRobotByIndex( robot_list, robot_index );
+  robot = robotlist_get_robot_by_index( robot_list, robot_index );
 
   if( chdir( robot->robot_dir ) == -1 ) {
     log_print( "Could not change to directory: %s", robot->robot_dir );
     return;
   }
-  new_robot = RobotCreateWithID( robot->robot_filename, RobotGetID( robot ) );
+  new_robot = robot_create_with_id( robot->robot_filename, robot_get_id( robot ) );
   if( new_robot != NULL ) {
-    RobotListReplaceRobot( robot_list, robot, new_robot );
+    robotlist_replace_robot( robot_list, robot, new_robot );
     new_robot->id = robot->id;
     new_robot->start_x = robot->start_x;
     new_robot->start_y = robot->start_y;
     new_robot->x_pos = new_robot->start_x;
     new_robot->y_pos = new_robot->start_y;
-    RobotDelete( robot );
+    robot_delete( robot );
   }
 }
 
@@ -513,14 +513,14 @@ void start_game_callback( Widget w, XtPointer user_data, XtPointer call_data )
     XtFree( str );
   }
 
-  RobotListInitWalk( robot_list );
-  while( (robot = RobotListWalkNext( robot_list )) != NULL ) {
-    RobotPlaceOnMap( robot );
+  robotlist_init_walk( robot_list );
+  while( (robot = robotlist_walk_next( robot_list )) != NULL ) {
+    robot_place_on_map( robot );
   }
 
   in_progress = 1;
 
-  bullet_list = ListCreate();
+  bullet_list = list_create();
   create_batwin( -1 );
 
   tmp_label = XmStringCreateLocalized( "Stop" );
@@ -639,18 +639,18 @@ void robot_list_popup_callback( Widget w, XtPointer user_data,
 
   case 2:			/* debug */
     for( c = 0 ; c < pos_count ; c++ ) {
-      RobotListGetRobotByIndex( robot_list,
-				pos_list[ c ] - 1 )->program->debug = 1;
+      robotlist_get_robot_by_index( robot_list,
+				    pos_list[ c ] - 1 )->program->debug = 1;
     }
     break;
 
   case 3:			/* invulnerable */
     for( c = 0 ; c < pos_count ; c++ ) {
-      tmp_robot = RobotListGetRobotByIndex( robot_list,
-					    pos_list[ c ] - 1 );
-      RobotSetInvulnerable( tmp_robot, !RobotGetInvulnerable( tmp_robot ) );
+      tmp_robot = robotlist_get_robot_by_index( robot_list,
+						pos_list[ c ] - 1 );
+      robot_set_invulnerable( tmp_robot, !robot_get_invulnerable( tmp_robot ) );
       sprintf( str, "%s%s", tmp_robot->robot_name,
-	       (RobotGetInvulnerable( tmp_robot ) ? " *" : "") );
+	       (robot_get_invulnerable( tmp_robot ) ? " *" : "") );
       tmp_label = XmStringCreateLocalized( str );
       XmListReplaceItemsPos( robot_list_widget, &tmp_label, 1, pos_list[ c ] );
       XmStringFree( tmp_label );

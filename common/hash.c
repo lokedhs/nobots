@@ -24,7 +24,7 @@
 #include "list.h"
 #include "hash.h"
 
-HashTable *HashTableCreate( HashFunc *hash_func, int nbuckets )
+HashTable *hashtable_create( HashFunc *hash_func, int nbuckets )
 {
   HashTable *table = mymalloc( sizeof( HashTable ) );
   int c;
@@ -40,78 +40,78 @@ HashTable *HashTableCreate( HashFunc *hash_func, int nbuckets )
 
   table->buckets = mymalloc( sizeof( HashBucket * ) * table->nbuckets );
   for( c = 0 ; c < table->nbuckets ; c++ ) {
-    table->buckets[ c ] = HashBucketCreate();
+    table->buckets[ c ] = hashbucket_create();
   }
 
   return table;
 }
 
-void HashTableDelete( HashTable *table )
+void hashtable_delete( HashTable *table )
 {
   int c;
 
   for( c = 0 ; c < table->nbuckets ; c++ ) {
-    HashBucketDelete( table->buckets[ c ] );
+    hashbucket_delete( table->buckets[ c ] );
   }
   myfree( table->buckets );
   myfree( table );
 }
 
-void HashTableAddEntry( HashTable *table, char *key, void *data )
+void hashtable_add_entry( HashTable *table, char *key, void *data )
 {
   int bucket;
 
   bucket = table->hash_func( key );
-  HashBucketAddEntry( table->buckets[ bucket ], key, data );
+  hashbucket_add_entry( table->buckets[ bucket ], key, data );
 }
 
-void HashTableDeleteEntry( HashTable *table, char *key )
+void hashtable_deleteEntry( HashTable *table, char *key )
 {
   int bucket;
 
   bucket = table->hash_func( key );
-  HashBucketDeleteEntry( table->buckets[ bucket ], key );
+  hashbucket_deleteEntry( table->buckets[ bucket ], key );
 }
 
-void *HashTableGetEntry( HashTable *table, char *key )
+void *hashtable_get_entry( HashTable *table, char *key )
 {
   int bucket;
 
   bucket = table->hash_func( key );
-  return HashBucketGetEntry( table->buckets[ bucket ], key );
+  return hashbucket_get_entry( table->buckets[ bucket ], key );
 }
 
-void HashTableInitWalk( HashTable *table )
+void hashtable_init_walk( HashTable *table )
 {
   table->walk_pointer = 0;
-  HashBucketInitWalk( table->buckets[ 0 ] );
+  hashbucket_init_walk( table->buckets[ 0 ] );
 }
 
-HashEntry *HashTableWalkNext( HashTable *table )
+HashEntry *hashtable_walk_next( HashTable *table )
 {
   HashEntry *entry;
 
-  while( (entry = HashBucketWalkNext( table->buckets[ table->walk_pointer ] ))
+  while( (entry = hashbucket_walk_next( table->buckets[ table->walk_pointer ] ))
 	 == NULL ){
     table->walk_pointer++;
     if( table->walk_pointer >= table->nbuckets ) {
       return NULL;
     }
-    HashBucketInitWalk( table->buckets[ table->walk_pointer ] );
+    hashbucket_init_walk( table->buckets[ table->walk_pointer ] );
   }
   return entry;
 }
 
 
-HashBucket *HashBucketCreate( void )
+HashBucket *hashbucket_create( void )
 {
   HashBucket *ret = mymalloc( sizeof( HashBucket ) );
 
-  ret->entries = ListCreate();
+  ret->entries = list_create();
   return ret;
 }
 
-void HashBucketDelete( HashBucket *bucket )
+void hashbucket_delete( HashBucket *bucket )
 {
   ListEntry *w;
 
@@ -119,28 +119,28 @@ void HashBucketDelete( HashBucket *bucket )
     myfree( ((HashEntry *)(w->val.ptr))->key );
     myfree( w->val.ptr );
   }
-  ListDelete( bucket->entries );
+  list_delete( bucket->entries );
 }
 
-void HashBucketAddEntry( HashBucket *bucket, char *key, void *data )
+void hashbucket_add_entry( HashBucket *bucket, char *key, void *data )
 {
-  ListAddToTailPtr( bucket->entries, HashEntryCreate( key, data ) );
+  list_add_to_tail_ptr( bucket->entries, hashentry_create( key, data ) );
 }
 
-void HashBucketDeleteEntry( HashBucket *bucket, char *key )
+void hashbucket_deleteEntry( HashBucket *bucket, char *key )
 {
   ListEntry *w;
 
   for( w = bucket->entries->first ; w != NULL ; w = w->next ) {
     if( strcmp( ((HashEntry *)(w->val.ptr))->key, key ) == 0 ) {
-      HashEntryDelete( (HashEntry *)w->val.ptr );
-      ListDeleteListEntry( bucket->entries, w );
+      hashentry_delete( (HashEntry *)w->val.ptr );
+      list_deleteListEntry( bucket->entries, w );
       break;
     }
   }
 }
 
-void *HashBucketGetEntry( HashBucket *bucket, char *key )
+void *hashbucket_get_entry( HashBucket *bucket, char *key )
 {
   ListEntry *w;
 
@@ -152,12 +152,12 @@ void *HashBucketGetEntry( HashBucket *bucket, char *key )
   return NULL;
 }
 
-void HashBucketInitWalk( HashBucket *bucket )
+void hashbucket_init_walk( HashBucket *bucket )
 {
   bucket->walk_pointer = bucket->entries->first;
 }
 
-HashEntry *HashBucketWalkNext( HashBucket *bucket )
+HashEntry *hashbucket_walk_next( HashBucket *bucket )
 {
   HashEntry *entry;
 
@@ -172,7 +172,7 @@ HashEntry *HashBucketWalkNext( HashBucket *bucket )
 }
 
 
-HashEntry *HashEntryCreate( char *key, void *data )
+HashEntry *hashentry_create( char *key, void *data )
 {
   HashEntry *entry = mymalloc( sizeof( HashEntry ) );
 
@@ -181,7 +181,7 @@ HashEntry *HashEntryCreate( char *key, void *data )
   return entry;
 }
 
-void HashEntryDelete( HashEntry *entry )
+void hashentry_delete( HashEntry *entry )
 {
   myfree( entry->key );
   myfree( entry );

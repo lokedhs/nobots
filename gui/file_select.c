@@ -102,8 +102,8 @@ void init_fileselect( void )
     Robot *robot1, *robot2;
 
     chdir( "/export/home/elias/robot/bots" );
-    robot1 = RobotCreate( "search2.robot" );
-    robot2 = RobotCreate( "turning.robot" );
+    robot1 = robot_create( "search2.robot" );
+    robot2 = robot_create( "turning.robot" );
     RobotListAddRobot( robot_list, robot1 );
     RobotListAddRobot( robot_list, robot2 );
     name = XmStringCreateLocalized( robot1->robot_name );
@@ -141,14 +141,14 @@ void fileselect_ok_callback( Widget w, XtPointer call_data, XtPointer user_data 
     chdir( dir_name );
   }
 
-  if( (robot = RobotCreate( file_name )) != NULL ) {
+  if( (robot = robot_create( file_name )) != NULL ) {
     name = XmStringCreateLocalized( robot->robot_name );
     XmListAddItem( robot_list_widget, name, 0 );
     XmStringFree( name );
     if( in_progress ) {
-      RobotPlaceOnMap( robot );
+      robot_place_on_map( robot );
     }
-    RobotListAddRobot( robot_list, robot );
+    robotlist_add_robot( robot_list, robot );
   }
 
   XtFree( dir_name );

@@ -53,7 +53,7 @@ int xmain( void )
 
 int main( int argc, char **argv )
 {
-  robot_list = RobotListCreate();
+  robot_list = robotlist_create();
 
   srandom( time( NULL ) );
   init_mainwin( &argc, argv );

@@ -29,16 +29,16 @@ typedef struct {
   int walkindex;
 } RobotList;
 
-#define RobotListNumRobots(robotlist)		((robotlist)->num_robots)
-#define RobotListGetRobot(robotlist,X)		((robotlist)->robots[ X ])
+#define robotlist_num_robots(robotlist)		((robotlist)->num_robots)
+#define robotlist_get_robot(robotlist,X)	((robotlist)->robots[ X ])
 
-RobotList *RobotListCreate( void );
-void RobotListDelete( RobotList * );
-void RobotListAddRobot( RobotList *, Robot * );
-void RobotListReplaceRobot( RobotList *, Robot *, Robot * );
-void RobotListDeleteRobot( RobotList *, Robot * );
-Robot *RobotListGetRobotByIndex( RobotList *, int );
-void RobotListInitWalk( RobotList * );
-Robot *RobotListWalkNext( RobotList * );
+RobotList *robotlist_create( void );
+void robotlist_delete( RobotList * );
+void robotlist_add_robot( RobotList *, Robot * );
+void robotlist_replace_robot( RobotList *, Robot *, Robot * );
+void robotlist_delete_robot( RobotList *, Robot * );
+Robot *robotlist_get_robot_by_index( RobotList *, int );
+void robotlist_init_walk( RobotList * );
+Robot *robotlist_walk_next( RobotList * );
 
 #endif

@@ -37,7 +37,7 @@ int debug_info = 1;
 extern Robot *current_robot;
 
 #define POPVAR(X)	int X = (StackGetSize(program->usrstack) ?     \
-				 StackPopInt(program->usrstack) : 0)
+				 stack_pop_int(program->usrstack) : 0)
 
 #define CHECK_PC(PC)				\
 	do {					\
@@ -129,12 +129,12 @@ void call_callback( Program *program, CallbackValues *cbvalues )
       exit( 1 );
     }
     if( program->current_callback_values == NULL ) {
-      StackPushInt( program->sysstack, program->pc );
+      stack_push_int( program->sysstack, program->pc );
       program->pc = program->callbacks[ cbvalues->callback_number ];
       program->current_callback_values = cbvalues;
     }
     else {
-      CircbufferPushPtr( program->waiting_callbacks, cbvalues );
+      QueuePushPtr( program->waiting_callbacks, cbvalues );
     }
   }
   else {

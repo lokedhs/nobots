@@ -90,14 +90,14 @@ void yyerror( char * );
 %%
 
 start:		{
-		  dup_strings = ListCreate();
-		  parsestk = StackCreate();
-		  funcs = HashTableCreate( NULL, 0 );
+		  dup_strings = list_create();
+		  parsestk = stack_create();
+		  funcs = hashtable_create( NULL, 0 );
                 } input {
                   clean_statement();
-		  StackDelete( parsestk );
-		  ListDelete( dup_strings );
-		  HashTableDelete( funcs );
+		  stack_delete( parsestk );
+		  list_delete( dup_strings );
+		  hashtable_delete( funcs );
 		}
 		;
 
@@ -119,7 +119,7 @@ newstatement:	  PRINT '(' expression ')' ';'
 			{
 			  add_array( $2, $3, $4 );
 			  if( $4 != NULL ) {
-			    ListDelete( $4 );
+			    list_delete( $4 );
 			  }
 			}
 
@@ -127,8 +127,8 @@ newstatement:	  PRINT '(' expression ')' ';'
 			{
 			  char *arg;
 			  Variable *var;
-			  List *save_vars = ListCreate();
-			  List *tmp_vars = ListCreate();
+			  List *save_vars = list_create();
+			  List *tmp_vars = list_create();
 
 			  if( current_func != NULL ) {
 			    compiler_error( "cannot declare function "
@@ -137,45 +137,45 @@ newstatement:	  PRINT '(' expression ')' ';'
 			  }
 
 			  current_func = mystrdup( $2 );
-			  StackPushPtr( parsestk, mk_label() );
+			  stack_push_ptr( parsestk, mk_label() );
 			  current_func_end = mystrdup( mk_label() );
 
 			  /* jump over the function */
 			  addinstr1( "jmp",
-				     MK_ABS( StackLookPtr( parsestk, 0 ) ) );
+				     MK_ABS( stack_look_ptr( parsestk, 0 ) ) );
 			  add_label( $2 );
 
 			  /* pop the arguments off the stack */
-			  ListInitWalk( $4 );
-			  while( (arg = ListWalkNextPtr( $4 )) != NULL ) {
+			  list_init_walk( $4 );
+			  while( (arg = list_walk_next_ptr( $4 )) != NULL ) {
 			    var = mymalloc( sizeof( Variable ) );
 			    *var = newvar();
 			    addinstr1( "pop", *var );
-			    ListAddToTailPtr( tmp_vars, var );
-			    ListAddToTailPtr( save_vars, arg );
+			    list_add_to_tail_ptr( tmp_vars, var );
+			    list_add_to_tail_ptr( save_vars, arg );
 			  }
 
 			  /* add the list of local variables here */
 
 			  /* push the arguments to be saved */
-			  ListInitWalk( save_vars );
-			  while( (arg = ListWalkNextPtr( save_vars )) != NULL ) {
+			  list_init_walk( save_vars );
+			  while( (arg = list_walk_next_ptr( save_vars )) != NULL ) {
 			    addinstr1( "push", MK_SYM( arg ) );
 			  }			  
 
 			  /* move the temporary to the real vairables */
-			  ListInitWalk( $4 );
-			  ListInitWalk( tmp_vars );
-			  while( (arg = ListWalkNextPtr( $4 )) != NULL ) {
-			    var = ListWalkNextPtr( tmp_vars );
+			  list_init_walk( $4 );
+			  list_init_walk( tmp_vars );
+			  while( (arg = list_walk_next_ptr( $4 )) != NULL ) {
+			    var = list_walk_next_ptr( tmp_vars );
 			    addinstr2( "move", *var, MK_SYM( arg ) );
 			    myfree( var );
 			  }
-			  ListDelete( tmp_vars );
-			  ListDelete( $4 );
+			  list_delete( tmp_vars );
+			  list_delete( $4 );
 
 			  /* push the list of save variables */
-			  StackPushPtr( parsestk, save_vars );
+			  stack_push_ptr( parsestk, save_vars );
 
 			}
 		  '{' statement_list '}'
@@ -187,14 +187,14 @@ newstatement:	  PRINT '(' expression ')' ';'
 			  myfree( current_func_end );
 
 			  /* restore the saved variables */
-			  tmp_vars = StackPopPtr( parsestk );
+			  tmp_vars = stack_pop_ptr( parsestk );
 			  w = tmp_vars->last;
 			  while( w != NULL ) {
 			    addinstr1( "pop", MK_SYM( w->val.ptr ) );
 			    myfree( w->val.ptr );
 			    w = w->prev;
 			  }
-			  ListDelete( tmp_vars );
+			  list_delete( tmp_vars );
 
 			  if( $1 == 0 ) {
 			    addinstr0( "rts" );
@@ -202,8 +202,8 @@ newstatement:	  PRINT '(' expression ')' ';'
 			  else {
 			    addinstr0( "rtc" );
 			  }
-			  add_label( StackLookPtr( parsestk, 0 ) );
-			  myfree( StackPopPtr( parsestk ) );
+			  add_label( stack_look_ptr( parsestk, 0 ) );
+			  myfree( stack_pop_ptr( parsestk ) );
 
 			  myfree( current_func );
 			  current_func = NULL;
@@ -211,7 +211,7 @@ newstatement:	  PRINT '(' expression ')' ';'
 
 		| SAFE SYMBOL ';'
 			{
-			  HashTableAddEntry( funcs, $2, (void *)1 );
+			  hashtable_add_entry( funcs, $2, (void *)1 );
 			}
 
 		| RETURN expression ';'
@@ -233,29 +233,29 @@ newstatement:	  PRINT '(' expression ')' ';'
 
 		| WHILE '('
 			{
-			  StackPushPtr( parsestk, mk_label() );
-			  StackPushPtr( parsestk, mk_label() );
-			  add_label( StackLookPtr( parsestk, 1 ) );
+			  stack_push_ptr( parsestk, mk_label() );
+			  stack_push_ptr( parsestk, mk_label() );
+			  add_label( stack_look_ptr( parsestk, 1 ) );
 			}
 		  expression ')'
 			{
 			  addinstr2( "jeq", $4,
-				     MK_ABS( StackLookPtr( parsestk, 0 ) ) );
+				     MK_ABS( stack_look_ptr( parsestk, 0 ) ) );
 			}
 		  statement
 			{
 			  addinstr1( "jmp",
-				     MK_ABS( StackLookPtr( parsestk, 1 ) ) );
-			  add_label( StackLookPtr( parsestk, 0 ) );
-			  myfree( StackPopPtr( parsestk ) );
-			  myfree( StackPopPtr( parsestk ) );
+				     MK_ABS( stack_look_ptr( parsestk, 1 ) ) );
+			  add_label( stack_look_ptr( parsestk, 0 ) );
+			  myfree( stack_pop_ptr( parsestk ) );
+			  myfree( stack_pop_ptr( parsestk ) );
 			}
 
 		| IF '(' expression ')'
 			{
-			  StackPushPtr( parsestk, mk_label() );
+			  stack_push_ptr( parsestk, mk_label() );
 			  addinstr2( "jeq", $3,
-				     MK_ABS( StackLookPtr( parsestk, 0 ) ) );
+				     MK_ABS( stack_look_ptr( parsestk, 0 ) ) );
 			}
 		  if_clauses
 
@@ -280,33 +280,33 @@ newstatement:	  PRINT '(' expression ')' ';'
 
 if_clauses:	  statement
 			{
-			  add_label( StackLookPtr( parsestk, 0 ) );
-			  myfree( StackPopPtr( parsestk ) );
+			  add_label( stack_look_ptr( parsestk, 0 ) );
+			  myfree( stack_pop_ptr( parsestk ) );
 			}
 
 		| statement ELSE
 			{
-			  StackPushPtr( parsestk, mk_label() );
+			  stack_push_ptr( parsestk, mk_label() );
 			  addinstr1( "jmp",
-				     MK_ABS( StackLookPtr( parsestk, 0 ) ) );
-			  add_label( StackLookPtr( parsestk, 1 ) );
+				     MK_ABS( stack_look_ptr( parsestk, 0 ) ) );
+			  add_label( stack_look_ptr( parsestk, 1 ) );
 			}
 		  statement
 			{
-			  add_label( StackLookPtr( parsestk, 0 ) );
-			  myfree( StackPopPtr( parsestk ) );
-			  myfree( StackPopPtr( parsestk ) );
+			  add_label( stack_look_ptr( parsestk, 0 ) );
+			  myfree( stack_pop_ptr( parsestk ) );
+			  myfree( stack_pop_ptr( parsestk ) );
 			}
 
 		;
 
 
 arglist:		{
-			  StackPushPtr( parsestk, ListCreate() );
+			  stack_push_ptr( parsestk, list_create() );
 			}
 		  arglist_values_or_none
 			{
-			  $$ = StackPopPtr( parsestk );
+			  $$ = stack_pop_ptr( parsestk );
 			}
 
 		;
@@ -321,7 +321,7 @@ arglist_values:	  arglist_val
 
 arglist_val:	  SYMBOL
 			{
-			  ListAddToTailPtr( StackLookPtr( parsestk, 0 ),
+			  list_add_to_tail_ptr( stack_look_ptr( parsestk, 0 ),
 					    mystrdup( $1 ) );
 			}
 		;
@@ -503,17 +503,17 @@ expression:	  INTEGER
 
 		| SYMBOL '(' call_arglist ')'
 			{
-			  int to_save = (HashTableGetEntry( funcs, $1 ) != NULL);
+			  int to_save = (hashtable_get_entry( funcs, $1 ) != NULL);
 			  Variable *var;
 			  if( to_save ) {
 			    save_tmpvars();
 			  }
-			  ListInitWalk( $3 );
-			  while( (var = ListWalkNextPtr( $3 )) != NULL ) {
+			  list_init_walk( $3 );
+			  while( (var = list_walk_next_ptr( $3 )) != NULL ) {
 			    addinstr1( "push", *var );
 			    myfree( var );
 			  }
-			  ListDelete( $3 );
+			  list_delete( $3 );
 			  addinstr1( "jsr", MK_ABS( $1 ) );
 			  if( to_save ) {
 			    restore_tmpvars();
@@ -543,17 +543,17 @@ expression:	  INTEGER
 
 
 robotcom_arglist:	{
-			  StackPushPtr( parsestk, ListCreate() );
+			  stack_push_ptr( parsestk, list_create() );
 			}
 		      robotcom_arglist_none
 			{
 			  Variable *var;
-			  ListInitWalk( StackLookPtr( parsestk, 0 ) );
-			  while( (var = ListWalkNextPtr( StackLookPtr( parsestk, 0 ) ) ) != NULL ) {
+			  list_init_walk( stack_look_ptr( parsestk, 0 ) );
+			  while( (var = list_walk_next_ptr( stack_look_ptr( parsestk, 0 ) ) ) != NULL ) {
 			    addinstr1( "push", *var );
 			    myfree( var );
 			  }
-			  ListDelete( StackPopPtr( parsestk ) );
+			  list_delete( stack_pop_ptr( parsestk ) );
 			}
 			;
 			  
@@ -569,18 +569,18 @@ robotcom_arglist_value:	  expression
 				{
 				  Variable *var = mymalloc( sizeof( Variable ) );
 				  *var = $1;
-				  ListAddToHeadPtr( StackLookPtr( parsestk, 0 ),
+				  list_add_to_head_ptr( stack_look_ptr( parsestk, 0 ),
 						    var );
 				}
 			;
 
 
 call_arglist:		{
-			  StackPushPtr( parsestk, ListCreate() );
+			  stack_push_ptr( parsestk, list_create() );
 			}
 		  call_arglist_none
 			{
-			  $$ = StackPopPtr( parsestk );
+			  $$ = stack_pop_ptr( parsestk );
 			}
 		;
 
@@ -596,7 +596,7 @@ call_arglist_value:	  expression
 				{
 				  Variable *var = mymalloc( sizeof( Variable ) );
 				  *var = $1;
-				  ListAddToHeadPtr( StackLookPtr( parsestk, 0 ),
+				  list_add_to_head_ptr( stack_look_ptr( parsestk, 0 ),
 						    var );
 				}
 			;
@@ -632,11 +632,11 @@ init_list:	  /* nothing */
 
 		| '['
 			{
-			  StackPushPtr( parsestk, ListCreate() );
+			  stack_push_ptr( parsestk, list_create() );
 			}
 		  init_list_vallist ']'
 			{
-			  $$ = StackPopPtr( parsestk );
+			  $$ = stack_pop_ptr( parsestk );
 			}
 		;
 
@@ -646,7 +646,7 @@ init_list_vallist:	  init_list_int
 
 init_list_int:	  INTEGER
 			{
-			  ListAddToTailInt( StackLookPtr( parsestk, 0 ), $1 );
+			  list_add_to_tail_int( stack_look_ptr( parsestk, 0 ), $1 );
 			}
 		;
 

@@ -40,7 +40,7 @@ OPER send 0
     return 0;
   }
   else {
-    StackPushInt( program->usrstack, ret );
+    stack_push_int( program->usrstack, ret );
   }
 
   return 1;
@@ -51,7 +51,7 @@ OPER receieve 0
 {
   int msgptr;
 
-  msgptr = StackPopInt( program->usrstack );
+  msgptr = stack_pop_int( program->usrstack );
   if( !receieve_message( current_robot, msgptr ) ) {
     runtime_warning( current_robot, "receieve error" );
     return 0;
@@ -66,11 +66,11 @@ OPER discard 0
 {
   MessageData *message;
 
-  if( CircbufferNumValues( current_robot->waiting_messages ) == 0 ) {
+  if( QueueNumValues( current_robot->waiting_messages ) == 0 ) {
     runtime_warning( current_robot, "discard error" );
     return 0;
   }
-  message = CircbufferPopPtr( current_robot->waiting_messages );
+  message = QueuePopPtr( current_robot->waiting_messages );
 
   if( --message->refcnt == 0 ) {
     myfree( message->data );

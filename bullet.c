@@ -42,24 +42,24 @@ extern RobotList *robot_list;
  *      robot     = robot that fired this bullet
  *      direction = direction of the bullet
  */
-Bullet *BulletCreate( Robot *robot, int direction )
+Bullet *bullet_create( Robot *robot, int direction )
 {
   Bullet *ret = mymalloc( sizeof( Bullet ) );
 
   ret->robot_from = robot;
-  ret->x_pos = RobotGetXCoordinate( robot );
-  ret->y_pos = RobotGetYCoordinate( robot );
+  ret->x_pos = robot_get_x_coordinate( robot );
+  ret->y_pos = robot_get_y_coordinate( robot );
   ret->heading = direction;
-  ret->speed = RobotGetWeaponSpeed( robot );
-  ret->power = RobotGetWeaponPower( robot );
+  ret->speed = robot_get_weaponspeed( robot );
+  ret->power = robot_get_weapon_power( robot );
   ret->explode_range = 1000;
-  ret->range = RobotGetWeaponRange( robot );
+  ret->range = robot_get_weapon_range( robot );
   ret->distance = 0;
 
   if( bullet_list == NULL ) {
-    bullet_list = ListCreate();
+    bullet_list = list_create();
   }
-  ListAddToTailPtr( bullet_list, ret );
+  list_add_to_tail_ptr( bullet_list, ret );
 
   return ret;
 }
@@ -67,9 +67,9 @@ Bullet *BulletCreate( Robot *robot, int direction )
 /*
  *  Delete a bullet
  */
-void BulletDelete( Bullet *bullet )
+void bullet_delete( Bullet *bullet )
 {
-  ListDeletePtr( bullet_list, bullet );
+  list_deletePtr( bullet_list, bullet );
   myfree( bullet );
 }
 
@@ -77,7 +77,7 @@ void BulletDelete( Bullet *bullet )
  *  Update the position of a bullet, and check if it
  *  has hit something.
  */
-void BulletUpdate( Bullet *bullet )
+void bullet_update( Bullet *bullet )
 {
   double curr_dir;
   double new_x, new_y;
@@ -89,7 +89,7 @@ void BulletUpdate( Bullet *bullet )
   new_x = bullet->x_pos + cos( curr_dir ) * bullet->speed;
   new_y = bullet->y_pos + sin( curr_dir ) * bullet->speed;
   if( intersect_obj( bullet->x_pos, bullet->y_pos, new_x, new_y ) ) {
-    BulletDelete( bullet );
+    bullet_delete( bullet );
     return;
   }
   bullet->x_pos = new_x;
@@ -102,7 +102,7 @@ void BulletUpdate( Bullet *bullet )
    *  delete the bullet
    */
   if( bullet->distance > bullet->range ) {
-    BulletDelete( bullet );
+    bullet_delete( bullet );
     return;
   }
 
@@ -111,16 +111,16 @@ void BulletUpdate( Bullet *bullet )
    *  If the new position of the bullet is in the vicinity of a
    *  robot, inflict some damage, and remove it.
    */
-  RobotListInitWalk( robot_list );
-  while( (w = RobotListWalkNext( robot_list )) != NULL ) {
+  robotlist_init_walk( robot_list );
+  while( (w = robotlist_walk_next( robot_list )) != NULL ) {
     if( bullet->robot_from != w ) {
-      bot_dx = abs( RobotGetXCoordinate( w ) - bullet->x_pos );
-      bot_dy = abs( RobotGetYCoordinate( w ) - bullet->y_pos );
+      bot_dx = abs( robot_get_x_coordinate( w ) - bullet->x_pos );
+      bot_dy = abs( robot_get_y_coordinate( w ) - bullet->y_pos );
       dist = sqrt( (bot_dx * bot_dx) + (bot_dy * bot_dy) );
       if( dist <= bullet->explode_range ) {
 	/*	printf( "robot %s took %d hit points\n", w->robot_name, bullet->power );*/
-	RobotTakeDamage( w, bullet->power );
-	BulletDelete( bullet );
+	robot_take_damage( w, bullet->power );
+	bullet_delete( bullet );
       }
     }
   }
@@ -133,9 +133,9 @@ void update_bullets( void )
 {
   Bullet *bullet;
 
-  ListInitWalk( bullet_list );
-  while( (bullet = ListWalkNextPtr( bullet_list )) != NULL ) {
-    BulletUpdate( bullet );
+  list_init_walk( bullet_list );
+  while( (bullet = list_walk_next_ptr( bullet_list )) != NULL ) {
+    bullet_update( bullet );
   }
 }
 
@@ -151,19 +151,19 @@ void delete_bullets_from_robot( Robot *robot )
     return;
   }
 
-  bullet_remove_list = ListCreate();
+  bullet_remove_list = list_create();
 
-  ListInitWalk( bullet_list );
-  while( (bullet = ListWalkNextPtr( bullet_list )) != NULL ) {
+  list_init_walk( bullet_list );
+  while( (bullet = list_walk_next_ptr( bullet_list )) != NULL ) {
     if( bullet->robot_from == robot ) {
-      ListAddToTailPtr( bullet_remove_list, bullet );
+      list_add_to_tail_ptr( bullet_remove_list, bullet );
     }
   }
 
-  ListInitWalk( bullet_remove_list );
-  while( (bullet = ListWalkNextPtr( bullet_remove_list )) != NULL ) {
-    BulletDelete( bullet );
+  list_init_walk( bullet_remove_list );
+  while( (bullet = list_walk_next_ptr( bullet_remove_list )) != NULL ) {
+    bullet_delete( bullet );
   }
 
-  ListDelete( bullet_remove_list );
+  list_delete( bullet_remove_list );
 }

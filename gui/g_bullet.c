@@ -41,15 +41,15 @@ void draw_bullets( BattleWindow *batwin )
   int sw;
   Bullet *bullet;
 
-  ListInitWalk( bullet_list );
-  while( (bullet = ListWalkNextPtr( bullet_list )) != NULL ) {
+  list_init_walk( bullet_list );
+  while( (bullet = list_walk_next_ptr( bullet_list )) != NULL ) {
 
     sw = 100 * batwin->xdiv;
     if( sw <= 0 )  sw = 1;
 
     XDrawArc( display, batwin->out_buffer, batwin->draw_gc,
-	      BulletGetXCoordinate( bullet ) * batwin->xdiv - sw / 2 - batwin->x,
-	      BulletGetYCoordinate( bullet ) * batwin->ydiv - sw / 2 - batwin->y,
+	      bullet_get_x_coordinate( bullet ) * batwin->xdiv - sw / 2 - batwin->x,
+	      bullet_get_y_coordinate( bullet ) * batwin->ydiv - sw / 2 - batwin->y,
 	      sw, sw, 0, 360 * 64 );
 
   }

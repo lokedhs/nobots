@@ -46,8 +46,8 @@ int send_message( Robot *robot, int dest, int message_id, int msglen,
     return -1;
   }
 
-  RobotListInitWalk( robot_list );
-  while( (w = RobotListWalkNext( robot_list )) != NULL ) {
+  robotlist_init_walk( robot_list );
+  while( (w = robotlist_walk_next( robot_list )) != NULL ) {
     if( w != robot && 
 	w->program->callbacks[ CB_MESSAGE_RECEIVED ] != -1 &&
 	w->listener_channel == dest ) {
@@ -62,7 +62,7 @@ int send_message( Robot *robot, int dest, int message_id, int msglen,
       }
       found++;
       ret->refcnt++;
-      CircbufferPushPtr( w->waiting_messages, ret );
+      QueuePushPtr( w->waiting_messages, ret );
 
       make_cbvalues_call_callback( w->program, CB_MESSAGE_RECEIVED, robot->id,
 				   message_id, msglen );
@@ -77,11 +77,11 @@ int receieve_message( Robot *robot, int msgptr )
 {
   MessageData *message;
 
-  if( CircbufferNumValues( robot->waiting_messages ) == 0 ) {
+  if( QueueNumValues( robot->waiting_messages ) == 0 ) {
     return 0;
   }
 
-  message = CircbufferPopPtr( robot->waiting_messages );
+  message = QueuePopPtr( robot->waiting_messages );
 
   if( msgptr + message->len > robot->program->mem_size ) {
     if( --message->refcnt == 0 ) {

@@ -76,7 +76,7 @@ typedef struct {
   int scanner_range;		/* Scanner range */
 
   /* communication */
-  Circbuffer *waiting_messages;	/* Message waiting to be delivered */
+  Queue *waiting_messages;	/* Message waiting to be delivered */
   int listener_channel;		/* Channel the robot is listening to */
 
   /* timeouts */
@@ -84,45 +84,45 @@ typedef struct {
 
 } Robot;
 
-#define RobotGetID(robot)		((robot)->id)
-#define RobotGetXCoordinate(robot)	((int)((robot)->x_pos))
-#define RobotGetYCoordinate(robot)	((int)((robot)->y_pos))
-#define RobotGetHeading(robot)		((robot)->current_heading)
-#define RobotGetSpeed(robot)		((robot)->current_speed)
-#define RobotGetMaxSpeed(robot)		((robot)->max_speed)
-#define RobotGetWeaponSpeed(robot)	((robot)->weapon_speed)
-#define RobotSetXCoordinate(robot,X)	((robot)->x_pos = (X))
-#define RobotSetYCoordinate(robot,Y)	((robot)->y_pos = (Y))
-#define RobotGetShields(robot)		((robot)->current_shields)
-#define RobotGetUpdateCounter(robot)	((robot)->update_counter)
+#define robot_get_id(robot)		((robot)->id)
+#define robot_get_x_coordinate(robot)	((int)((robot)->x_pos))
+#define robot_get_y_coordinate(robot)	((int)((robot)->y_pos))
+#define robot_get_heading(robot)		((robot)->current_heading)
+#define robot_get_speed(robot)		((robot)->current_speed)
+#define robot_get_maxspeed(robot)		((robot)->max_speed)
+#define robot_get_weaponspeed(robot)	((robot)->weapon_speed)
+#define robot_set_x_coordinate(robot,X)	((robot)->x_pos = (X))
+#define robot_set_y_coordinate(robot,Y)	((robot)->y_pos = (Y))
+#define robot_get_shields(robot)		((robot)->current_shields)
+#define robot_get_update_counter(robot)	((robot)->update_counter)
 
-#define RobotGetLastScannerDirection(robot)	\
+#define robot_get_last_scanner_direction(robot)	\
 					((robot)->last_scanner_direction)
-#define RobotGetLastScannerWidth(robot)	((robot)->last_scanner_width)
-#define RobotSetLastScannerWidth(robot,X)	\
+#define robot_get_last_scanner_width(robot)	((robot)->last_scanner_width)
+#define robot_set_last_scanner_width(robot,X)	\
 					((robot)->last_scanner_width = (X))
-#define RobotGetScannerStatus(robot)	((robot)->scanner_recharge_status)
+#define robot_get_scanner_status(robot)	((robot)->scanner_recharge_status)
 
-#define RobotGetScannerRange(robot)	((robot)->scanner_range)
-#define RobotGetWeaponStatus(robot)	((robot)->weapon_recharge_status)
-#define RobotSetWeaponStatus(robot,X)	((robot)->weapon_recharge_status = (X))
-#define RobotGetWeaponPower(robot)	((robot)->weapon_power)
-#define RobotGetWeaponRange(robot)	((robot)->weapon_range)
-#define RobotGetInvulnerable(robot)	((robot)->invulnerable)
-#define RobotSetInvulnerable(robot,X)	((robot)->invulnerable = (X))
+#define robot_get_scanner_range(robot)	((robot)->scanner_range)
+#define robot_get_weapon_status(robot)	((robot)->weapon_recharge_status)
+#define robot_set_weapon_status(robot,X)	((robot)->weapon_recharge_status = (X))
+#define robot_get_weapon_power(robot)	((robot)->weapon_power)
+#define robot_get_weapon_range(robot)	((robot)->weapon_range)
+#define robot_get_invulnerable(robot)	((robot)->invulnerable)
+#define robot_set_invulnerable(robot,X)	((robot)->invulnerable = (X))
 
-Robot *RobotCreate( char * );
-Robot *RobotCreateWithID( char *, int );
-void RobotDelete( Robot * );
-void RobotPlaceOnMap( Robot * );
-void RobotSetDestinationSpeed( Robot *, int );
-void RobotSetDestinationHeading( Robot *, int );
-void RobotExecuteInstructions( Robot * );
-void RobotUpdate( Robot * );
-void RobotTakeDamage( Robot *, int );
-int RobotScan( Robot *, int, int );
-void RobotWallScan( Robot *, int, int );
-int RobotAddTimeout( Robot *, int );
-void RobotDeleteTimeout( Robot *, int );
+Robot *robot_create( char * );
+Robot *robot_create_with_id( char *, int );
+void robot_delete( Robot * );
+void robot_place_on_map( Robot * );
+void robot_set_destination_speed( Robot *, int );
+void robot_set_destination_heading( Robot *, int );
+void robot_execute_instructions( Robot * );
+void robot_update( Robot * );
+void robot_take_damage( Robot *, int );
+int robot_scan( Robot *, int, int );
+void robot_wallscan( Robot *, int, int );
+int robot_add_timeout( Robot *, int );
+void robot_deleteTimeout( Robot *, int );
 
 #endif

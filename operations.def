@@ -24,7 +24,7 @@ OPER move 2
 
 OPER print 1
 {
-  printf( "robot: %d: %d\n", RobotGetID( current_robot ), *arg0 );
+  printf( "robot: %d: %d\n", robot_get_id( current_robot ), *arg0 );
   return 1;
 }
 
@@ -168,7 +168,7 @@ OPER jne 2
 OPER jsr 1
 {
   CHECK_PC( *arg0 );
-  StackPushInt( program->sysstack, program->pc );
+  stack_push_int( program->sysstack, program->pc );
   program->pc = *arg0;
   return 1;
 }
@@ -179,7 +179,7 @@ OPER rts 0
     runtime_warning( current_robot, "rts with empty system stack" );
     return 0;
   }
-  program->pc = StackPopInt( program->sysstack );
+  program->pc = stack_pop_int( program->sysstack );
   return 1;
 }
 
@@ -204,7 +204,7 @@ OPER exit 0
 
 OPER push 1
 {
-  StackPushInt( program->usrstack, *arg0 );
+  stack_push_int( program->usrstack, *arg0 );
   return 1;
 }
 
@@ -214,7 +214,7 @@ OPER pop 1
     runtime_warning( current_robot, "pop from empty stack" );
     return 0;
   }
-  *arg0 = StackPopInt( program->usrstack );
+  *arg0 = stack_pop_int( program->usrstack );
   return 1;
 }
 
@@ -254,14 +254,14 @@ OPER rtc 0
     return 0;
   }
   myfree( program->current_callback_values );
-  if( CircbufferNumValues( program->waiting_callbacks ) > 0 ) {
+  if( QueueNumValues( program->waiting_callbacks ) > 0 ) {
     program->current_callback_values =
-      CircbufferPopPtr( program->waiting_callbacks );
+      QueuePopPtr( program->waiting_callbacks );
     program->pc = program->callbacks[ program->current_callback_values->callback_number ];
   }
   else {
     program->current_callback_values = NULL;
-    program->pc = StackPopInt( program->sysstack );
+    program->pc = stack_pop_int( program->sysstack );
   }
   return 1;
 }

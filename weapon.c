@@ -24,14 +24,14 @@
 
 int fire_weapon( Robot *robot, int direction )
 {
-  int recharge_status = RobotGetWeaponStatus( robot );
+  int recharge_status = robot_get_weapon_status( robot );
   Bullet *bullet;
 
   if( recharge_status == 0 ) {
-    bullet = BulletCreate( robot, direction );
-    RobotSetWeaponStatus( robot,
-			  BulletGetPower( bullet ) *
-			  BulletGetExplodeRange( bullet ) );
+    bullet = bullet_create( robot, direction );
+    robot_set_weapon_status( robot,
+			  bullet_get_power( bullet ) *
+			  bullet_get_explode_range( bullet ) );
   }
   return recharge_status;
 }

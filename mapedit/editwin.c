@@ -404,8 +404,8 @@ void redraw_map( void )
 #define SZ 5
 
   if( start_point_list != NULL ) {
-    ListInitWalk( start_point_list );
-    while( (startpoint = ListWalkNextPtr( start_point_list )) != NULL ) {
+    list_init_walk( start_point_list );
+    while( (startpoint = list_walk_next_ptr( start_point_list )) != NULL ) {
       XDrawLine( display, draw_window, draw_gc,
 		 startpoint->x * xdiv - SZ, startpoint->y *ydiv - SZ,
 		 startpoint->x * xdiv + SZ, startpoint->y *ydiv  + SZ);
@@ -442,8 +442,8 @@ void save_map( char *filename )
   }
 
   if( start_point_list != NULL ) {
-    ListInitWalk( start_point_list );
-    while( (startpoint = ListWalkNextPtr( start_point_list )) != NULL ) {
+    list_init_walk( start_point_list );
+    while( (startpoint = list_walk_next_ptr( start_point_list )) != NULL ) {
       fprintf( fp, "startpoint %d %d\n", startpoint->x, startpoint->y );
     }
   }

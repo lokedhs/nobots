@@ -23,24 +23,24 @@
 typedef union {
   int i;
   void *ptr;
-} CircbufferValue;
+} QueueValue;
 
 typedef struct {
-  CircbufferValue *values;
+  QueueValue *values;
   int size;
   int head;
   int tail;
-} Circbuffer;
+} Queue;
 
-#define CircbufferPopInt(circbuffer)	(CircbufferPop( (circbuffer) ).i)
-#define CircbufferPopPtr(circbuffer)	(CircbufferPop( (circbuffer) ).ptr)
+#define QueuePopInt(queue)		(QueuePop( (queue) ).i)
+#define QueuePopPtr(queue)		(QueuePop( (queue) ).ptr)
 
-Circbuffer *CircbufferCreate( void );
-void CircbufferDelete( Circbuffer * );
-CircbufferValue CircbufferPop( Circbuffer * );
-void CircbufferPushInt( Circbuffer *, int );
-void CircbufferPushPtr( Circbuffer *, void * );
-void CircbufferPush( Circbuffer *, CircbufferValue );
-int CircbufferNumValues( Circbuffer * );
+Queue *QueueCreate( void );
+void QueueDelete( Queue * );
+QueueValue QueuePop( Queue * );
+void QueuePushInt( Queue *, int );
+void QueuePushPtr( Queue *, void * );
+void QueuePush( Queue *, QueueValue );
+int QueueNumValues( Queue * );
 
 #endif

@@ -43,28 +43,28 @@ typedef struct list_struct {
 #define ListGetFirstInt(list)		((list)->first->val.i)
 #define ListGetLastPtr(list)		((list)->last->val.ptr)
 #define ListGetLastInt(list)		((list)->last->val.i)
-#define ListDeleteFirst(list)		(ListDeleteListEntry((list), \
+#define list_deleteFirst(list)		(list_deleteListEntry((list), \
 							     (list)->first))
-#define ListDeleteLast(list)		(ListDeleteListEntry((list),\
+#define list_deleteLast(list)		(list_deleteListEntry((list),\
 							     (list)->last))
 
-List *ListCreate( void );
-void ListDelete( List * );
-void ListDeleteListEntry( List *, ListEntry * );
-void ListDeletePtr( List *, void * );
-void ListAddToHeadInt( List *, int );
-void ListAddToHeadPtr( List *, void * );
-void ListAddToTailInt( List *, int );
-void ListAddToTailPtr( List *, void * );
-void ListAddBeforePtr( List *, ListEntry *, void * );
-void ListAddBeforeInt( List *, ListEntry *, int );
-void ListAddAfterPtr( List *, ListEntry *, void * );
-void ListAddAfterInt( List *, ListEntry *, int );
-void ListInitWalk( List * );
-int ListWalkNextInt( List *, int * );
-void *ListWalkNextPtr( List * );
-int ListSize( List * );
-int ListGetPosInt( List *, int );
-void *ListGetPosPtr( List *, int );
+List *list_create( void );
+void list_delete( List * );
+void list_deleteListEntry( List *, ListEntry * );
+void list_deletePtr( List *, void * );
+void list_add_to_head_int( List *, int );
+void list_add_to_head_ptr( List *, void * );
+void list_add_to_tail_int( List *, int );
+void list_add_to_tail_ptr( List *, void * );
+void list_add_before_ptr( List *, ListEntry *, void * );
+void list_add_before_int( List *, ListEntry *, int );
+void list_add_after_ptr( List *, ListEntry *, void * );
+void list_add_after_int( List *, ListEntry *, int );
+void list_init_walk( List * );
+int list_walk_next_int( List *, int * );
+void *list_walk_next_ptr( List * );
+int list_size( List * );
+int list_get_pos_int( List *, int );
+void *list_get_pos_ptr( List *, int );
 
 #endif

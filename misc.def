@@ -21,7 +21,7 @@ OPER c_to_a 0
   POPVAR(x);
   POPVAR(y);
 
-  StackPushInt( program->usrstack, c_to_a( x, y ) );
+  stack_push_int( program->usrstack, c_to_a( x, y ) );
   return 1;
 }
 
@@ -30,7 +30,7 @@ OPER c_to_r 0
   POPVAR(x);
   POPVAR(y);
 
-  StackPushInt( program->usrstack, c_to_r( x, y ) );
+  stack_push_int( program->usrstack, c_to_r( x, y ) );
   return 1;
 }
 
@@ -39,7 +39,7 @@ OPER ar_to_x 0
   POPVAR(a);
   POPVAR(r);
 
-  StackPushInt( program->usrstack, ar_to_x( a, r ) );
+  stack_push_int( program->usrstack, ar_to_x( a, r ) );
   return 1;
 }
 
@@ -48,7 +48,7 @@ OPER ar_to_y 0
   POPVAR(a);
   POPVAR(r);
 
-  StackPushInt( program->usrstack, ar_to_y( a, r ) );
+  stack_push_int( program->usrstack, ar_to_y( a, r ) );
   return 1;
 }
 

@@ -34,15 +34,15 @@ typedef struct {
   int distance;			/* Total distance the bullet has travelled */
 } Bullet;
 
-Bullet *BulletCreate( Robot *, int );
-void BulletDelete( Bullet * );
-void BulletUpdate( Bullet * );
+Bullet *bullet_create( Robot *, int );
+void bullet_delete( Bullet * );
+void bullet_update( Bullet * );
 void update_bullets( void );
 void delete_bullets_from_robot( Robot * );
 
-#define BulletGetXCoordinate(bullet)	((bullet)->x_pos)
-#define BulletGetYCoordinate(bullet)	((bullet)->y_pos)
-#define BulletGetPower(bullet)		((bullet)->power)
-#define BulletGetExplodeRange(bullet)	((bullet)->explode_range)
+#define bullet_get_x_coordinate(bullet)	((bullet)->x_pos)
+#define bullet_get_y_coordinate(bullet)	((bullet)->y_pos)
+#define bullet_get_power(bullet)		((bullet)->power)
+#define bullet_get_explode_range(bullet)	((bullet)->explode_range)
 
 #endif

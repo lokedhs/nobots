@@ -19,56 +19,56 @@
 OPER setspeed 0
 {
   POPVAR(newspeed);
-  RobotSetDestinationSpeed( current_robot, newspeed );
+  robot_set_destination_speed( current_robot, newspeed );
   return 1;
 }
 
 OPER getspeed 0
 {
-  StackPushInt( program->usrstack, RobotGetSpeed( current_robot ) );
+  stack_push_int( program->usrstack, robot_get_speed( current_robot ) );
   return 1;
 }
 
 OPER setheading 0
 {
   POPVAR(newheading);
-  RobotSetDestinationHeading( current_robot, newheading );
+  robot_set_destination_heading( current_robot, newheading );
   return 1;
 }
 
 OPER getheading 0
 {
-  StackPushInt( program->usrstack, RobotGetHeading( current_robot ) );
+  stack_push_int( program->usrstack, robot_get_heading( current_robot ) );
   return 1;
 }
 
 OPER getxcoordinate 0
 {
-  StackPushInt( program->usrstack, RobotGetXCoordinate( current_robot ) );
+  stack_push_int( program->usrstack, robot_get_x_coordinate( current_robot ) );
   return 1;
 }
 
 OPER getycoordinate 0
 {
-  StackPushInt( program->usrstack, RobotGetYCoordinate( current_robot ) );
+  stack_push_int( program->usrstack, robot_get_y_coordinate( current_robot ) );
   return 1;
 }
 
 OPER getmaxspeed 0
 {
-  StackPushInt( program->usrstack, RobotGetMaxSpeed( current_robot ) );
+  stack_push_int( program->usrstack, robot_get_maxspeed( current_robot ) );
   return 1;
 }
 
 OPER getscannerstatus 0
 {
-  StackPushInt( program->usrstack, RobotGetScannerStatus( current_robot ) );
+  stack_push_int( program->usrstack, robot_get_scanner_status( current_robot ) );
   return 1;
 }  
 
 OPER uptime 0
 {
-  StackPushInt( program->usrstack, RobotGetUpdateCounter( current_robot ) );
+  stack_push_int( program->usrstack, robot_get_update_counter( current_robot ) );
   return 1;
 }
 
@@ -78,8 +78,8 @@ OPER scan 0
   POPVAR(scan_width);
   int status;
 
-  status = RobotScan( current_robot, scan_direction, scan_width );
-  StackPushInt( program->usrstack, status );
+  status = robot_scan( current_robot, scan_direction, scan_width );
+  stack_push_int( program->usrstack, status );
   return 1;
 }
 
@@ -91,10 +91,10 @@ OPER wallscan 0
   if( range < 0 ) {
     range = 0;
   }
-  if( range > RobotGetScannerRange( current_robot ) ) {
-    range = RobotGetScannerRange( current_robot );
+  if( range > robot_get_scanner_range( current_robot ) ) {
+    range = robot_get_scanner_range( current_robot );
   }
-  RobotWallScan( current_robot, direction, range );
+  robot_wallscan( current_robot, direction, range );
   return 1;
 }
 
@@ -110,13 +110,13 @@ OPER fire 0
   int status;
 
   status = fire_weapon( current_robot, fix_direction( direction ) );
-  StackPushInt( program->usrstack, status );
+  stack_push_int( program->usrstack, status );
   return 1;
 }
 
 OPER getweaponstatus 0
 {
-  StackPushInt( program->usrstack, RobotGetWeaponStatus( current_robot ) );
+  stack_push_int( program->usrstack, robot_get_weapon_status( current_robot ) );
   return 1;
 }
 
@@ -132,7 +132,7 @@ OPER addtimer 0
     runtime_warning( current_robot, "illegal timer value" );
     return 0;
   }
-  StackPushInt( program->usrstack, RobotAddTimeout( current_robot, attime ) );
+  stack_push_int( program->usrstack, robot_add_timeout( current_robot, attime ) );
   return 1;
 }
 
@@ -140,6 +140,6 @@ OPER deltimer 0
 {
   POPVAR(id);
 
-  RobotDeleteTimeout( current_robot, id );
+  robot_deleteTimeout( current_robot, id );
   return 1;
 }

@@ -31,6 +31,7 @@
 #include <Xm/AtomMgr.h>
 #include <Xm/Protocols.h>
 
+#include <stdio.h>
 #include <stdarg.h>
 
 #include "mem.h"

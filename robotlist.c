@@ -28,7 +28,7 @@
 
 void g_delete_robot( int );
 
-RobotList *RobotListCreate( void )
+RobotList *robotlist_create( void )
 {
   RobotList *ret = mymalloc( sizeof( RobotList ) );
 
@@ -39,20 +39,20 @@ RobotList *RobotListCreate( void )
   return ret;
 }
 
-void RobotListDelete( RobotList *robotlist )
+void robotlist_delete( RobotList *robotlist )
 {
   int c;
 
   for( c = 0 ; c < robotlist->num_robots ; c++ ) {
     if( robotlist->robots[ c ] != NULL ) {
-      RobotDelete( robotlist->robots[ c ] );
+      robot_delete( robotlist->robots[ c ] );
     }
   }
   myfree( robotlist->robots );
   myfree( robotlist );
 }
 
-void RobotListAddRobot( RobotList *robotlist, Robot *robot )
+void robotlist_add_robot( RobotList *robotlist, Robot *robot )
 {
   if( robotlist->num_robots >= robotlist->robot_list_size ) {
     robotlist->robot_list_size += 10;
@@ -63,8 +63,8 @@ void RobotListAddRobot( RobotList *robotlist, Robot *robot )
   robotlist->robots[ robotlist->num_robots++ ] = robot;
 }
 
-void RobotListReplaceRobot( RobotList *robotlist, Robot *robot,
-			    Robot *new_robot )
+void robotlist_replace_robot( RobotList *robotlist, Robot *robot,
+			      Robot *new_robot )
 {
   int c;
   int n;
@@ -84,7 +84,7 @@ void RobotListReplaceRobot( RobotList *robotlist, Robot *robot,
   robotlist->robots[ c ] = new_robot;
 }
 
-void RobotListDeleteRobot( RobotList *robotlist, Robot *robot )
+void robotlist_delete_robot( RobotList *robotlist, Robot *robot )
 {
   int c;
   int n;
@@ -103,11 +103,11 @@ void RobotListDeleteRobot( RobotList *robotlist, Robot *robot )
 
   g_delete_robot( n );
 
-  RobotDelete( robotlist->robots[ c ] );
+  robot_delete( robotlist->robots[ c ] );
   robotlist->robots[ c ] = NULL;
 }
 
-Robot *RobotListGetRobotByIndex( RobotList *robotlist, int index )
+Robot *robotlist_get_robot_by_index( RobotList *robotlist, int index )
 {
   int c;
   int ic;
@@ -126,12 +126,12 @@ Robot *RobotListGetRobotByIndex( RobotList *robotlist, int index )
   return NULL;
 }    
 
-void RobotListInitWalk( RobotList *robotlist )
+void robotlist_init_walk( RobotList *robotlist )
 {
   robotlist->walkindex = 0;
 }
 
-Robot *RobotListWalkNext( RobotList *robotlist )
+Robot *robotlist_walk_next( RobotList *robotlist )
 {
   Robot *robot;
 

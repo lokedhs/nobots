@@ -55,15 +55,15 @@ void update_loop( XtPointer user_data, XtIntervalId *interval_id )
 
   for( c3 = 0 ; c3 < 2 ; c3++ ) {
     for( c2 = 0 ; c2 < 50 ; c2++ ) {
-      RobotListInitWalk( robot_list );
-      while( (robot = RobotListWalkNext( robot_list )) != NULL ){ 
-	RobotExecuteInstructions( robot );
+      robotlist_init_walk( robot_list );
+      while( (robot = robotlist_walk_next( robot_list )) != NULL ){ 
+	robot_execute_instructions( robot );
       }
     }
 
-    RobotListInitWalk( robot_list );
-    while( (robot = RobotListWalkNext( robot_list )) != NULL ){ 
-      RobotUpdate( robot );
+    robotlist_init_walk( robot_list );
+    while( (robot = robotlist_walk_next( robot_list )) != NULL ){ 
+      robot_update( robot );
     }
     update_bullets();
     world_update_counter++;
@@ -80,9 +80,9 @@ void update_loop( XtPointer user_data, XtIntervalId *interval_id )
    *  we can't do this i the g_redraw_batwin routine because then
    *  only the first window gets its scanner arc painted.
    */
-  RobotListInitWalk( robot_list );
-  while( (robot = RobotListWalkNext( robot_list )) != NULL ){ 
-    RobotSetLastScannerWidth( robot, 0 );
+  robotlist_init_walk( robot_list );
+  while( (robot = robotlist_walk_next( robot_list )) != NULL ){ 
+    robot_set_last_scanner_width( robot, 0 );
   }
 
 
@@ -90,8 +90,8 @@ void update_loop( XtPointer user_data, XtIntervalId *interval_id )
    *  Update the stats windows
    */
   if( statswindows != NULL ) {
-    ListInitWalk( statswindows );
-    while( (stats_window = ListWalkNextPtr( statswindows )) != NULL ) {
+    list_init_walk( statswindows );
+    while( (stats_window = list_walk_next_ptr( statswindows )) != NULL ) {
       update_stats_window( stats_window );
     }
   }

@@ -33,13 +33,13 @@ typedef struct {
 
 #define StackGetSize(X)		((X)->pos)
 
-Stack *StackCreate( void );
-void StackDelete( Stack * );
-void StackPushInt( Stack *, int );
-void StackPushPtr( Stack *, void * );
-int StackPopInt( Stack * );
-void *StackPopPtr( Stack * );
-int StackLookInt( Stack *, int );
-void *StackLookPtr( Stack *, int );
+Stack *stack_create( void );
+void stack_delete( Stack * );
+void stack_push_int( Stack *, int );
+void stack_push_ptr( Stack *, void * );
+int stack_pop_int( Stack * );
+void *stack_pop_ptr( Stack * );
+int stack_look_int( Stack *, int );
+void *stack_look_ptr( Stack *, int );
 
 #endif

@@ -19,7 +19,7 @@ include ../Makefile.global
 
 LIB = libcommon.a
 
-OBJS = list.o hash.o stack.o circbuffer.o mem.o
+OBJS = list.o hash.o stack.o queue.o mem.o
 
 all:		$(LIB)
 

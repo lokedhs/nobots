@@ -109,7 +109,7 @@ void create_batwin( int follow )
   }
   else {
     sprintf( tmp2, "Battle window - Following %s",
-	     RobotListGetRobotByIndex( robot_list, follow )->robot_name );
+	     robotlist_get_robot_by_index( robot_list, follow )->robot_name );
   }
   XtSetArg( args[ ac ], XmNtitle, tmp2 );			ac++;
   XtSetArg( args[ ac ], XmNallowShellResize, True );		ac++;
@@ -250,7 +250,7 @@ void create_batwin( int follow )
     ret->follow = -1;
   }
   else {
-    ret->follow = RobotGetID( RobotListGetRobotByIndex( robot_list, follow ) );
+    ret->follow = robot_get_id( robotlist_get_robot_by_index( robot_list, follow ) );
   }
 
   /* draw GC */
@@ -442,17 +442,17 @@ void draw_batwin( BattleWindow *batwin )
 
 
   if( batwin->follow != -1 ) {
-    if( RobotListGetRobot( robot_list, batwin->follow ) == NULL ) {
+    if( robotlist_get_robot( robot_list, batwin->follow ) == NULL ) {
       close_batwin( batwin );
       return;
     }
 
     center_batwin( batwin,
-		   (RobotGetXCoordinate( RobotListGetRobot( robot_list,
-							    batwin->follow ) ) *
+		   (robot_get_x_coordinate( robotlist_get_robot( robot_list,
+								 batwin->follow ) ) *
 		    batwin->xdiv),
-		   (RobotGetYCoordinate( RobotListGetRobot( robot_list,
-							    batwin->follow ) ) *
+		   (robot_get_y_coordinate( robotlist_get_robot( robot_list,
+								 batwin->follow ) ) *
 		    batwin->ydiv) );
   }
 
@@ -478,23 +478,23 @@ void draw_batwin( BattleWindow *batwin )
   /*
    *  Draw the scanner
    */
-  RobotListInitWalk( robot_list );
-  while( (robot = RobotListWalkNext( robot_list )) != NULL ) {
+  robotlist_init_walk( robot_list );
+  while( (robot = robotlist_walk_next( robot_list )) != NULL ) {
     int dir1;
     int xrange, yrange;
 
-    if( RobotGetLastScannerWidth( robot ) > 0 ) {
-      dir1 = (RobotGetLastScannerDirection( robot ) -
-	      RobotGetLastScannerWidth( robot ) / 2 ) % 3600;
-      xrange = RobotGetScannerRange( robot ) * batwin->xdiv;
-      yrange = RobotGetScannerRange( robot ) * batwin->ydiv;
+    if( robot_get_last_scanner_width( robot ) > 0 ) {
+      dir1 = (robot_get_last_scanner_direction( robot ) -
+	      robot_get_last_scanner_width( robot ) / 2 ) % 3600;
+      xrange = robot_get_scanner_range( robot ) * batwin->xdiv;
+      yrange = robot_get_scanner_range( robot ) * batwin->ydiv;
 
       XFillArc( display, batwin->out_buffer, batwin->scanner_gc,
-		RobotGetXCoordinate( robot ) * batwin->xdiv - xrange - batwin->x,
-		RobotGetYCoordinate( robot ) * batwin->ydiv - yrange - batwin->y,
+		robot_get_x_coordinate( robot ) * batwin->xdiv - xrange - batwin->x,
+		robot_get_y_coordinate( robot ) * batwin->ydiv - yrange - batwin->y,
 		xrange * 2, yrange * 2,
 		(360 * 64) - (dir1 * 64 / 10),
-		-(RobotGetLastScannerWidth( robot ) * 64 / 10) );
+		-(robot_get_last_scanner_width( robot ) * 64 / 10) );
     }
   }
 
@@ -509,11 +509,11 @@ void draw_batwin( BattleWindow *batwin )
   /*
    *  Draw the robots
    */
-  RobotListInitWalk( robot_list );
-  while( (robot = RobotListWalkNext( robot_list )) != NULL ) {
-    x = RobotGetXCoordinate( robot );
-    y = RobotGetYCoordinate( robot );
-    heading = RobotGetHeading( robot );
+  robotlist_init_walk( robot_list );
+  while( (robot = robotlist_walk_next( robot_list )) != NULL ) {
+    x = robot_get_x_coordinate( robot );
+    y = robot_get_y_coordinate( robot );
+    heading = robot_get_heading( robot );
     draw_rot_line( batwin, x, y, heading, 250, 0, -250, 100 );
     draw_rot_line( batwin, x, y, heading, 250, 0, -250, -100 );
     draw_rot_line( batwin, x, y, heading, -250, 100, -250, -100 );

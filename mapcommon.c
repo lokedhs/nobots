@@ -129,11 +129,11 @@ void clear_map( void )
 
       tmp = ListGetLastPtr( start_point_list );
       myfree( tmp );
-      ListDeleteLast( start_point_list );
+      list_deleteLast( start_point_list );
     }
-    ListDelete( start_point_list );
+    list_delete( start_point_list );
   }
-  start_point_list = ListCreate();
+  start_point_list = list_create();
 }
 
 
@@ -168,10 +168,10 @@ void add_startpoint( int x, int y )
   StartPoint *startpoint;
 
   if( start_point_list == NULL ) {
-    start_point_list = ListCreate();
+    start_point_list = list_create();
   }
   startpoint = mymalloc( sizeof( StartPoint ) );
   startpoint->x = FIX_COORD( x, 0, MAP_MAX_X );
   startpoint->y = FIX_COORD( y, 0, MAP_MAX_Y );
-  ListAddToTailPtr( start_point_list, startpoint );
+  list_add_to_tail_ptr( start_point_list, startpoint );
 }

@@ -23,7 +23,7 @@
 #include "mem.h"
 #include "stack.h"
 
-Stack *StackCreate( void )
+Stack *stack_create( void )
 {
   Stack *stack = mymalloc( sizeof( Stack ) );
 
@@ -34,13 +34,13 @@ Stack *StackCreate( void )
   return stack;
 }
 
-void StackDelete( Stack *stack )
+void stack_delete( Stack *stack )
 {
   myfree( stack->entries );
   myfree( stack );
 }
 
-void StackPushInt( Stack *stack, int val )
+void stack_push_int( Stack *stack, int val )
 {
   if( stack->pos >= stack->size ) {
     stack->size += 10;
@@ -50,7 +50,7 @@ void StackPushInt( Stack *stack, int val )
   stack->entries[ stack->pos++ ].i = val;
 }
 
-void StackPushPtr( Stack *stack, void *val )
+void stack_push_ptr( Stack *stack, void *val )
 {
   if( stack->pos >= stack->size ) {
     stack->size += 10;
@@ -60,7 +60,7 @@ void StackPushPtr( Stack *stack, void *val )
   stack->entries[ stack->pos++ ].ptr = val;
 }
 
-int StackPopInt( Stack *stack )
+int stack_pop_int( Stack *stack )
 {
   if( stack->pos <= 0 ) {
     fprintf( stderr, "trying to pop values off stack with nothing on it\n" );
@@ -69,7 +69,7 @@ int StackPopInt( Stack *stack )
   return stack->entries[ --stack->pos ].i;
 }
 
-void *StackPopPtr( Stack *stack )
+void *stack_pop_ptr( Stack *stack )
 {
   if( stack->pos <= 0 ) {
     fprintf( stderr, "trying to pop values off stack with nothing on it\n" );
@@ -78,7 +78,7 @@ void *StackPopPtr( Stack *stack )
   return stack->entries[ --stack->pos ].ptr;
 }
 
-int StackLookInt( Stack *stack, int pos )
+int stack_look_int( Stack *stack, int pos )
 {
   if( stack->pos <= pos ) {
     fprintf( stderr, "trying to look at nonexistant stack entry\n" );
@@ -87,7 +87,7 @@ int StackLookInt( Stack *stack, int pos )
   return stack->entries[ stack->pos - pos - 1 ].i;
 }
 
-void *StackLookPtr( Stack *stack, int pos )
+void *stack_look_ptr( Stack *stack, int pos )
 {
   if( stack->pos <= pos ) {
     fprintf( stderr, "trying to look at nonexistant stack entry\n" );

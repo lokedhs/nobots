@@ -62,8 +62,8 @@ StatsWindow *create_stats_window( int robot_list_index )
   Atom wm_delete_atom;
   int robot_id;
 
-  robot_id = RobotGetID( RobotListGetRobotByIndex( robot_list,
-						   robot_list_index ) );
+  robot_id = robot_get_id( robotlist_get_robot_by_index( robot_list,
+							 robot_list_index ) );
 
   /* dialog shell */
   ac = 0;
@@ -83,7 +83,7 @@ StatsWindow *create_stats_window( int robot_list_index )
   /* title label */
   ac = 0;
   sprintf( tmp, "Stats for: %s",
-	   RobotListGetRobot( robot_list, robot_id )->robot_name );
+	   robotlist_get_robot( robot_list, robot_id )->robot_name );
   label_string = XmStringCreateLocalized( tmp );
   XtSetArg( args[ ac ], XmNlabelString, label_string );         ac++;
   XtSetArg( args[ ac ], XmNleftAttachment, XmATTACH_FORM );     ac++;
@@ -120,9 +120,9 @@ StatsWindow *create_stats_window( int robot_list_index )
   ret->last_heading = 0;
 
   if( statswindows == NULL ) {
-    statswindows = ListCreate();
+    statswindows = list_create();
   }
-  ListAddToTailPtr( statswindows, ret );
+  list_add_to_tail_ptr( statswindows, ret );
 
   return ret;
 }
@@ -193,14 +193,14 @@ void close_statswin( StatsWindow *stats_window )
 {
   XtDestroyWidget( stats_window->stats_shell );
   myfree( stats_window );
-  ListDeletePtr( statswindows, stats_window );
-  printf( "deleted, num: %d\n", ListSize( statswindows ) );
+  list_deletePtr( statswindows, stats_window );
+  printf( "deleted, num: %d\n", list_size( statswindows ) );
 }  
 
 
 void update_stats_window( StatsWindow *stats_window )
 {
-  Robot *robot = RobotListGetRobot( robot_list, stats_window->robot_id );
+  Robot *robot = robotlist_get_robot( robot_list, stats_window->robot_id );
 
   if( robot == NULL ) {
     printf("closing id=%d\n",stats_window->robot_id);
@@ -210,18 +210,18 @@ void update_stats_window( StatsWindow *stats_window )
 
   /* UPDATE THE STATS */
 
-  if( stats_window->last_shields != RobotGetShields( robot ) ) {
+  if( stats_window->last_shields != robot_get_shields( robot ) ) {
     XtVaSetValues( stats_window->shields_widget,
-		   XmNvalue, RobotGetShields( robot ),
+		   XmNvalue, robot_get_shields( robot ),
 		   NULL );
-    stats_window->last_shields = RobotGetShields( robot );
+    stats_window->last_shields = robot_get_shields( robot );
   }
 
-  if( stats_window->last_speed != RobotGetSpeed( robot ) ) {
+  if( stats_window->last_speed != robot_get_speed( robot ) ) {
     XtVaSetValues( stats_window->speed_widget,
-		   XmNvalue, RobotGetSpeed( robot ),
+		   XmNvalue, robot_get_speed( robot ),
 		   NULL );
-    stats_window->last_speed = RobotGetSpeed( robot );
+    stats_window->last_speed = robot_get_speed( robot );
   }
 
 

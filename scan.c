@@ -46,25 +46,25 @@ void scan_for_robots( Robot *robot, int scan_direction, int scan_width )
   int this_x, this_y;
   int enemy_found = 0;
 
-  this_x = RobotGetXCoordinate( robot );
-  this_y = RobotGetYCoordinate( robot );
+  this_x = robot_get_x_coordinate( robot );
+  this_y = robot_get_y_coordinate( robot );
 
-  RobotListInitWalk( robot_list );
-  while( (target = RobotListWalkNext( robot_list )) != NULL ) {
+  robotlist_init_walk( robot_list );
+  while( (target = robotlist_walk_next( robot_list )) != NULL ) {
     if( robot != target ) {
-      x = RobotGetXCoordinate( target );
-      y = RobotGetYCoordinate( target );
+      x = robot_get_x_coordinate( target );
+      y = robot_get_y_coordinate( target );
       c_to_ar( x - this_x, y - this_y, &target_angle, &target_dist );
-      if( target_dist <= RobotGetScannerRange( robot ) &&
+      if( target_dist <= robot_get_scanner_range( robot ) &&
 	  ABS( direction_diff( scan_direction, target_angle ) ) < scan_width / 2 ) {
 
 	if( !intersect_obj( this_x, this_y, x, y ) ) {
 	  enemy_found = 1;
 	  make_cbvalues_call_callback( robot->program, CB_ENEMY_FOUND, x, y,
 				       target_angle, target_dist,
-				       RobotGetHeading( target ),
-				       RobotGetSpeed( target ),
-				       RobotGetID( target ) );
+				       robot_get_heading( target ),
+				       robot_get_speed( target ),
+				       robot_get_id( target ) );
 	}
 
       }
@@ -107,8 +107,8 @@ void scan_for_walls( Robot *robot, int direction, int range )
 
   dist = MAP_MAX_X*2;
 
-  robot_x = RobotGetXCoordinate( robot );
-  robot_y = RobotGetYCoordinate( robot );
+  robot_x = robot_get_x_coordinate( robot );
+  robot_y = robot_get_y_coordinate( robot );
   ar_to_c( direction, range, &scan_dest_x, &scan_dest_y );
   scan_dest_x += robot_x;
   scan_dest_y += robot_y;

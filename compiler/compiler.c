@@ -126,9 +126,9 @@ void add_array( char *name, int size, List *init_data )
   int first = 1;
 
   if( init_data != NULL ) {
-    if( size > 0 && ListSize( init_data ) > size ) {
+    if( size > 0 && list_size( init_data ) > size ) {
       compiler_error( "list size (%d) is smaller than init data (%d)",
-		      size, ListSize( init_data ) );
+		      size, list_size( init_data ) );
       return;
     }
     
@@ -141,8 +141,8 @@ void add_array( char *name, int size, List *init_data )
 
     wid_counter = 0;
     str[ 0 ] = 0;
-    ListInitWalk( init_data );
-    while( ListWalkNextInt( init_data, &val ) ) {
+    list_init_walk( init_data );
+    while( list_walk_next_int( init_data, &val ) ) {
       if( !first ) {
 	strcat( str, ", " );
       }
@@ -263,7 +263,7 @@ char *lstrdup( char *str )
     fprintf( stderr, "Couldn't strdup\n" );
     exit( 1 );
   }
-  ListAddToTailPtr( dup_strings, str2 );
+  list_add_to_tail_ptr( dup_strings, str2 );
   return str2;
 }
 
@@ -272,7 +272,7 @@ void clean_statement( void )
   /* cleanup the lstrdup list */
   while( dup_strings->first != NULL ) {
     myfree( dup_strings->last->val.ptr );
-    ListDeleteListEntry( dup_strings, dup_strings->last );
+    list_deleteListEntry( dup_strings, dup_strings->last );
   }
 
   /* set the tmpvar level to 0 */

@@ -21,7 +21,7 @@
 #define LANG_H
 
 #include "stack.h"
-#include "circbuffer.h"
+#include "queue.h"
 
 #define NUM_CALLBACKS		256
 #define MAX_CALLBACK_DATA	64
@@ -49,7 +49,7 @@ typedef struct {
   Stack *usrstack;		/* user stack */
   Stack *sysstack;		/* system stack (for jsr) */
   int callbacks[ NUM_CALLBACKS ]; /* list of callbacks */
-  Circbuffer *waiting_callbacks; /* list of callbacks waiting to be executed */
+  Queue *waiting_callbacks; /* list of callbacks waiting to be executed */
   CallbackValues *current_callback_values; /* current callback values */
   int debug;			/* debugger active */
 } Program;
