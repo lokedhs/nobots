@@ -22,7 +22,7 @@ LDFLAGS = -L../common $(GTKLDFLAGS)
 
 LIB = libgtkgui.a
 
-OBJS = nobotsgtk.o interface.o support.o
+OBJS = nobotsgtk.o interface.o support.o file_select.o
 
 all:		$(LIB)
 
