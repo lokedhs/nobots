@@ -32,8 +32,8 @@
 
 static void log_print_stderr( char *, ... );
 
-RobotList *robot_list;
-int world_update_counter = 0;
+extern RobotList *robot_list;
+extern int world_update_counter;
 
 typedef void LogFunc( char *, ... );
 LogFunc *log_print = log_print_stderr;

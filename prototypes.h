@@ -56,4 +56,8 @@ void move_robot( Robot * );
 /* weapon.c */
 int fire_weapon( Robot *, int );
 
+/* simulation.c */
+int init_simulation_file_map( char * );
+void init_simulation_random_map( int );
+
 #endif

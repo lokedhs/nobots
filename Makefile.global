@@ -23,8 +23,8 @@ LDFLAGS = $(CFLAGS)
 XCFLAGS = -I/usr/X11R6/LessTif/Motif2.1/include -I/usr/X11R6/include
 XLDFLAGS = -L/usr/X11R6/LessTif/Motif2.1/lib -L/usr/X11R6/lib -lXm -lXpm -lXt -lXext -lSM -lICE -lX11 -lm
 
-GTKCFLAGS += `pkg-config --cflags gtk+-2.0`
-GTKLDFLAGS += `pkg-config --libs gtk+-2.0`
+GTKCFLAGS += `pkg-config --cflags gtk+-2.0` -I/usr/local/include/gtkglext-0.x
+GTKLDFLAGS += `pkg-config --libs gtk+-2.0` -lgtkglext-x11-0.x
 
 YACC = bison -y
 #YACC = yacc

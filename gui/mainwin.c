@@ -61,7 +61,7 @@ Widget num_objects_field;
 Widget map_file_filename_field;
 Widget map_file_selection_button;
 
-int in_progress = 0;
+extern int in_progress = 0;
 
 extern Widget fileselect;
 extern Widget logwin_shell;

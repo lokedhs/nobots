@@ -24,7 +24,7 @@ GTKEXEC = nobotsgtk
 
 OBJS = execute.o evaluate.o assembler.o parser.o robot.o direction.o deffile.o \
 	scan.o octree.o bullet.o robot_move.o weapon.o map.o mapcommon.o \
-	comms.o robotlist.o
+	comms.o robotlist.o simulation.o
 
 MOTIFGUILDFLAGS = -Lgui
 MOTIFGUILIB = -lgui

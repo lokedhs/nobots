@@ -17,12 +17,10 @@
  *    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef ROBOT_LIST_TABLE
-#define ROBOT_LIST_TABLE
+#ifndef GAME_FIELD_H
+#define GAME_FIELD_H
 
-#include "robot.h"
-
-void init_robot_tree_table( void );
-void add_robot_list_entry( Robot *robot );
+void init_gl( void );
+void init_game_field_window( void );
 
 #endif

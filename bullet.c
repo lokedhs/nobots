@@ -31,8 +31,7 @@
 
 #define DEG_TO_RAD(X)	(((double)(X) * (M_PI * 2)) / 360)
 
-List *bullet_list = NULL;
-
+extern List *bullet_list;
 extern RobotList *robot_list;
 
 /*

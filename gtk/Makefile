@@ -1,5 +1,5 @@
 #    robot assembler - robot assembly language
-#    Copyright (C) 1998  Elias Martenson (elias.martenson@sun.se)
+#    Copyright (C) 1998-2002  Elias Martenson (elias.martenson@sun.se)
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -22,7 +22,8 @@ LDFLAGS += -L../common $(GTKLDFLAGS)
 
 LIB = libgtkgui.a
 
-OBJS = nobotsgtk.o interface.o support.o file_select.o robot_list_table.o
+OBJS = nobotsgtk.o interface.o support.o file_select.o robot_list_table.o \
+	game_field.o
 
 all:		$(LIB)
 
