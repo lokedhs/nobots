@@ -31,6 +31,8 @@ all:		$(EXEC)
 $(EXEC):	$(OBJS)
 		$(CC) $(LDFLAGS) -o $(EXEC) $(OBJS) $(EXTRALIBS) $(LIBS)
 
+mapcommon.o:
+		$(CC) $(CFLAGS) -c ../mapcommon.c -o mapcommon.o
 
 clean:
 		rm -f $(EXEC) *.o

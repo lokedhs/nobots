@@ -16,10 +16,10 @@
 #    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 CC = cc
-#CFLAGS = -DFUNCPROTO=15 -g -Wall -I/usr/local/include
-CFLAGS = -DFUNCPROTO=15 -g -v -I/usr/local/include
+CFLAGS = -g -Wall -I/usr/X11R6/LessTif/Motif2.1/include
+#CFLAGS = -DFUNCPROTO=15 -g -v -I/usr/local/include
 XCFLAGS =
-LDFLAGS = $(CFLAGS) -L/usr/local/lib
+LDFLAGS = $(CFLAGS) -L/usr/X11R6/LessTif/Motif2.1/lib -L/usr/X11R6/lib
 XLDFLAGS =
 #YACC = bison -y
 YACC = yacc
