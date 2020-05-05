@@ -1,5 +1,5 @@
 #    robot assembler - robot assembly language
-#    Copyright (C) 1996-2002  Elias Martenson (elias-m@algonet.se)
+#    Copyright (C) 1996-2020  Elias Martenson (lokedhs@gmail.com)
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
